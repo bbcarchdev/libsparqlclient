@@ -20,8 +20,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 pkgconfigdir = @libdir@/pkgconfig
 
-LIBS = \
-	@LIBCURL_LIBS@ @LIBCURL_LOCAL_LIBS@
+LIBS =
 
 AM_CPPFLAGS = @AM_CPPFLAGS@
 
@@ -33,6 +32,12 @@ libsparqlclient_la_SOURCES = p_libsparqlclient.h libsparqlclient.h \
 	connection.c update.c rest.c urlencode.c
 
 libsparqlclient_la_LDFLAGS = -avoid-version
+
+libsparqlclient_la_LIBADD = @LIBCURL_LIBS@ @LIBCURL_LOCAL_LIBS@
+
+bin_PROGRAMS = libsparqlclient-config
+
+libsparqlclient_config_SOURCES = libsparqlclient-config.c
 
 pkgconfig_DATA = libsparqlclient.pc
 
