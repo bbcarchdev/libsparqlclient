@@ -63,7 +63,7 @@ main(int argc, char **argv)
 			printf("-I%s\n", INCLUDEDIR);
 			break;
 		case SHOW_LIBS:
-			printf("-L%s -luri\n", LIBDIR);
+			printf("-L%s -lsparqlclient\n", LIBDIR);
 			break;
 		case SHOW_VERSION:
 			puts(VERSION);
