@@ -42,3 +42,8 @@ libsparqlclient_config_SOURCES = libsparqlclient-config.c
 pkgconfig_DATA = libsparqlclient.pc
 
 EXTRA_DIST = .release LICENSE-2.0
+
+dist_man3_MANS = libsparqlclient.3
+
+libsparqlclient.3: $(srcdir)/libsparqlclient.xml
+	$(XML2MAN) $<

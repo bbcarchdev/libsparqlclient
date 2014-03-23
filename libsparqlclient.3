@@ -1,0 +1,102 @@
+'\" t
+.\"     Title: libsparqlclient
+.\"    Author: Mo McRoberts
+.\" Generator: DocBook XSL-NS Stylesheets v1.76.1 <http://docbook.sf.net/>
+.\"      Date: 03/23/2014
+.\"    Manual: SPARQL Client Library
+.\"    Source: Twine
+.\"  Language: English
+.\"
+.TH "LIBSPARQLCLIENT" "3" "03/23/2014" "Twine" "SPARQL Client Library"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+libsparqlclient \- SPARQL client library
+.SH "SYNOPSIS"
+.HP \w'\fBcc\fR\ 'u
+\fBcc\fR [\fB\fIflag\fR\fR] \fIfile\ \&...\fR \-lsparqlclient [\fB\fIlibrary\ \&...\fR\fR]
+.sp
+.ft B
+.nf
+#include <libsparqlclient\&.h>
+.fi
+.ft
+.SH "DESCRIPTION"
+.PP
+SPARQL 1\&.1 is a W3C\-recommendation protocol and query language for communicating with RDF data stores in order to perform queries and modify data stored within them\&. The query language is analogous to SQL for relational database management systems\&.
+.SH "INTERFACES"
+.PP
+
+libsparqlclient
+provides the public interfaces listed below\&.
+.\" line length increase to cope w/ tbl weirdness
+.ll +(\n(LLu * 62u / 100u)
+.TS
+ll.
+\fIFunction\fR	\fIDescription\fR
+T{
+\fBsparql_create\fR
+T}	T{
+Create a new SPARQL client context
+T}
+T{
+\fBsparql_destroy\fR
+T}	T{
+Free resources used by a SPARQL client context
+T}
+T{
+\fBsparql_set_query_uri\fR
+T}	T{
+Set the URI of the endpoint providing the SPARQL 1\&.1 query service
+T}
+T{
+\fBsparql_set_update_uri\fR
+T}	T{
+Set the URI of the endpoint providing the SPARQL 1\&.1 update service
+T}
+T{
+\fBsparql_set_data_uri\fR
+T}	T{
+Set the URI of the endpoint providing the SPARQL 1\&.1 graph store service
+T}
+T{
+\fBsparql_set_logger\fR
+T}	T{
+Specify the callback function invoked when libsparqlclient produces log events
+T}
+T{
+\fBsparql_set_verbose\fR
+T}	T{
+Specify whether HTTP interactions should occur verbosely
+T}
+T{
+\fBsparql_update\fR
+T}	T{
+Perform a SPARQL 1\&.1 update operation
+T}
+T{
+\fBsparql_put\fR
+T}	T{
+Perform a SPARQL 1\&.1 graph store PUT operation
+T}
+.TE
+.\" line length decrease back to previous value
+.ll -(\n(LLu * 62u / 100u)
+.sp

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<refentry xml:id="libsparqlclient-3" xmlns="http://docbook.org/ns" version="5.0" xml:lang="en">
+  <info>
+	<title>SPARQL Client Library</title>
+	<productname>Twine</productname>
+	<authorgroup>
+	  <author>
+		<personname>
+		  <firstname>Mo</firstname>
+		  <surname>McRoberts</surname>
+		</personname>
+		<affiliation>
+		  <org>
+			<orgname>BBC</orgname>
+			<orgdiv>Archive Development</orgdiv>
+			<uri>http://www.bbc.co.uk/archive/</uri>
+		  </org>
+		</affiliation>
+	  </author>
+	</authorgroup>
+	<copyright>
+	  <year>2014</year>
+	  <holder>BBC</holder>
+	</copyright>
+  </info>
+  
+  <refmeta>
+	<refentrytitle>libsparqlclient</refentrytitle>
+	<manvolnum>3</manvolnum>
+  </refmeta>
+
+  <refnamediv>
+	<refname>libsparqlclient</refname>
+	<refpurpose>SPARQL client library</refpurpose>
+  </refnamediv>
+
+  <refsynopsisdiv>
+	<cmdsynopsis>
+	    <command>cc</command>
+		<arg choice="opt"><option><replaceable>flag</replaceable></option></arg>
+		<arg choice="plain"><replaceable>file …</replaceable></arg>
+		<arg choice="plain">-lsparqlclient</arg>
+		<arg choice="opt"><option><replaceable>library …</replaceable></option></arg>
+	</cmdsynopsis>
+	<funcsynopsis>
+	  <funcsynopsisinfo>#include &lt;libsparqlclient.h&gt;</funcsynopsisinfo>
+	</funcsynopsis>
+  </refsynopsisdiv>
+
+  <refsect1>
+	<title>Description</title>
+	<para>
+	  SPARQL 1.1 is a W3C-recommendation protocol and query language for
+	  communicating with RDF data stores in order to perform queries and modify
+	  data stored within them. The query language is analogous to SQL for
+	  relational database management systems.
+	</para>
+
+  </refsect1>
+
+  <refsect1>
+	<title>Interfaces</title>
+	<para>
+	  <package>libsparqlclient</package> provides the public interfaces listed
+	  below.
+	</para>
+
+	<segmentedlist>
+	  <segtitle>Function</segtitle>
+	  <segtitle>Description</segtitle>
+	  <seglistitem>
+		<seg><function>sparql_create</function></seg>
+		<seg>Create a new SPARQL client context</seg>
+	  </seglistitem>
+	  <seglistitem>
+		<seg><function>sparql_destroy</function></seg>
+		<seg>Free resources used by a SPARQL client context</seg>
+	  </seglistitem>
+	  <seglistitem>
+		<seg><function>sparql_set_query_uri</function></seg>
+		<seg>Set the URI of the endpoint providing the SPARQL 1.1 query service</seg>
+	  </seglistitem>
+	  <seglistitem>
+		<seg><function>sparql_set_update_uri</function></seg>
+		<seg>Set the URI of the endpoint providing the SPARQL 1.1 update service</seg>
+	  </seglistitem>
+	  <seglistitem>
+		<seg><function>sparql_set_data_uri</function></seg>
+		<seg>Set the URI of the endpoint providing the SPARQL 1.1 graph store service</seg>
+	  </seglistitem>
+	  <seglistitem>
+		<seg><function>sparql_set_logger</function></seg>
+		<seg>Specify the callback function invoked when <package>libsparqlclient</package> produces log events</seg>
+	  </seglistitem>
+	  <seglistitem>
+		<seg><function>sparql_set_verbose</function></seg>
+		<seg>Specify whether HTTP interactions should occur verbosely</seg>
+	  </seglistitem>
+	  <seglistitem>
+		<seg><function>sparql_update</function></seg>
+		<seg>Perform a SPARQL 1.1 update operation</seg>
+	  </seglistitem>
+	  <seglistitem>
+		<seg><function>sparql_put</function></seg>
+		<seg>Perform a SPARQL 1.1 graph store PUT operation</seg>
+	  </seglistitem>
+	</segmentedlist>
+
+  </refsect1>
+
+</refentry>
