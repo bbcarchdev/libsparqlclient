@@ -29,13 +29,17 @@ include_HEADERS = libsparqlclient.h
 lib_LTLIBRARIES = libsparqlclient.la
 
 libsparqlclient_la_SOURCES = p_libsparqlclient.h libsparqlclient.h \
-	connection.c update.c rest.c urlencode.c
+	connection.c update.c query.c datastore-put.c \
+	perform-query.c resultset.c urlencode.c
 
 libsparqlclient_la_LDFLAGS = -avoid-version
 
-libsparqlclient_la_LIBADD = @LIBCURL_LIBS@ @LIBCURL_LOCAL_LIBS@
+libsparqlclient_la_LIBADD = @LIBCURL_LOCAL_LIBS@ @LIBCURL_LIBS@ \
+	@LIBXML2_LOCAL_LIBS@ @LIBXML2_LIBS@ \
+	@LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@ \
+	@PTHREAD_LOCAL_LIBS@ @PTHREAD_LIBS@
 
-bin_PROGRAMS = libsparqlclient-config
+bin_PROGRAMS = libsparqlclient-config sparql-query
 
 libsparqlclient_config_SOURCES = libsparqlclient-config.c
 
@@ -47,3 +51,6 @@ dist_man3_MANS = libsparqlclient.3
 
 libsparqlclient.3: $(srcdir)/libsparqlclient.xml
 	$(XML2MAN) $<
+
+sparql_query_SOURCES = sparql-query.c
+sparql_query_LDADD = libsparqlclient.la @LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@

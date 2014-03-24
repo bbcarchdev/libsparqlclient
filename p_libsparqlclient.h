@@ -1,4 +1,4 @@
-/* Twine: SPARQL client
+/* SPARQL client library
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
@@ -23,11 +23,33 @@
 # include <stddef.h>
 # include <stdlib.h>
 # include <string.h>
+# include <ctype.h>
 # include <errno.h>
 # include <syslog.h>
 # include <curl/curl.h>
+# include <libxml/parser.h>
 
 # include "libsparqlclient.h"
+
+typedef struct sparql_query_struct SPARQLQUERY;
+typedef enum sparql_parse_state SPARQLSTATE;
+
+enum sparql_parse_state
+{
+	SQS_ERROR = -1,
+	SQS_ROOT = 0,
+	SQS_SPARQL,
+	SQS_HEAD,
+	SQS_LINK,
+	SQS_VARIABLE,
+	SQS_RESULTS,
+	SQS_RESULT,
+	SQS_BINDING,
+	SQS_URI,
+	SQS_LITERAL,
+	SQS_BNODE,
+	SQS_BOOLEAN
+};
 
 struct sparql_connection_struct
 {
@@ -36,12 +58,42 @@ struct sparql_connection_struct
 	char *data_uri;
 	int verbose;
 	sparql_logger_fn logger;
+	librdf_world *world;
+	int world_alloc;
 };
 
 size_t sparql_urlencode_size_(const char *src);
 size_t sparql_urlencode_lsize_(const char *src, size_t srclen);
 int sparql_urlencode_(const char *src, char *dest, size_t destlen);
 int sparql_urlencode_l_(const char *src, size_t srclen, char *dest, size_t destlen);
+
 void sparql_logf_(SPARQL *connection, int priority, const char *format, ...);
+
+SPARQLQUERY *sparql_query_create_(SPARQL *connection);
+int sparql_query_destroy_(SPARQLQUERY *query);
+int sparql_query_set_data_(SPARQLQUERY *query, void *data);
+int sparql_query_set_variable_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, const char *name, void *data));
+int sparql_query_set_link_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, const char *href, void *data));
+int sparql_query_set_beginresults_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, void *data));
+int sparql_query_set_endresults_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, void *data));
+int sparql_query_set_beginresult_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, void *data));
+int sparql_query_set_endresult_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, void *data));
+int sparql_query_set_literal_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, const char *name, const char *language, const char *datatype, const char *text, void *data));
+int sparql_query_set_uri_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, const char *name, const char *uri, void *data));
+int sparql_query_set_bnode_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, const char *name, const char *ref, void *data));
+int sparql_query_set_boolean_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, int value, void *data));
+int sparql_query_set_complete_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, void *data));
+int sparql_query_set_error_(SPARQLQUERY *query, int (*callback)(SPARQLQUERY *query, void *data));
+int sparql_query_perform_(SPARQLQUERY *query, const char *statement, size_t length);
+
+SPARQLRES *sparqlres_create_(SPARQL *connection);
+int sparqlres_set_boolean_(SPARQLRES *res, int value);
+int sparqlres_add_variable_(SPARQLRES *res, const char *name);
+int sparqlres_add_link_(SPARQLRES *res, const char *href);
+
+SPARQLROW *sparqlrow_create_(SPARQLRES *res);
+int sparqlrow_set_uri_(SPARQLROW *row, const char *binding, const char *uri);
+int sparqlrow_set_literal_(SPARQLROW *row, const char *binding, const char *language, const char *datatype, const char *value);
+int sparqlrow_set_bnode_(SPARQLROW *row, const char *binding, const char *ref);
 
 #endif /*!P_LIBSPARQLCLIENT_H_*/

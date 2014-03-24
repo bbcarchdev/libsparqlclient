@@ -1,4 +1,4 @@
-/* Twine: SPARQL server RESTful interface
+/* SPARQL RDF Datastore - PUT interface
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *

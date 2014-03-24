@@ -25,17 +25,46 @@
 # include <librdf.h>
 
 typedef struct sparql_connection_struct SPARQL;
+typedef struct sparql_results_struct SPARQLRES;
+typedef struct sparql_row_struct SPARQLROW;
+
+# ifdef __cplusplus
+extern "C" {
+# endif
+
 typedef void (*sparql_logger_fn)(int priority, const char *format, va_list args);
 
-SPARQL *sparql_create(void);
+SPARQL *sparql_create(void *reserved);
 int sparql_destroy(SPARQL *connection);
 int sparql_set_query_uri(SPARQL *connection, const char *uri);
 int sparql_set_data_uri(SPARQL *connection, const char *uri);
 int sparql_set_update_uri(SPARQL *connection, const char *uri);
 int sparql_set_logger(SPARQL *connection, sparql_logger_fn logger);
 int sparql_set_verbose(SPARQL *connection, int verbose);
+int sparql_set_world(SPARQL *connection, librdf_world *world);
+librdf_world *sparql_world(SPARQL *connection);
 
+SPARQLRES *sparql_query(SPARQL *connection, const char *query, size_t length);
+librdf_model *sparql_query_model(SPARQL *connection, const char *query, size_t length);
 int sparql_update(SPARQL *connection, const char *statement, size_t length);
 int sparql_put(SPARQL *connection, const char *graph, const char *turtle, size_t length);
+
+int sparqlres_is_boolean(SPARQLRES *res);
+int sparqlres_boolean(SPARQLRES *res);
+size_t sparqlres_variables(SPARQLRES *res);
+const char *sparqlres_variable(SPARQLRES *res, size_t index);
+ssize_t sparqlres_variable_index(SPARQLRES *res, const char *name);
+size_t sparqlres_links(SPARQLRES *res);
+const char *sparqlres_link(SPARQLRES *res, size_t index);
+int sparqlres_reset(SPARQLRES *res);
+SPARQLROW *sparqlres_next(SPARQLRES *res);
+int sparqlres_destroy(SPARQLRES *res);
+
+size_t sparqlrow_bindings(SPARQLROW *row);
+librdf_node *sparqlrow_binding(SPARQLROW *row, size_t index);
+
+# ifdef __cplusplus
+}
+# endif
 
 #endif /*!LIBSPARQLCLIENT_H_*/
