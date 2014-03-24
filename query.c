@@ -165,7 +165,11 @@ sparql_query_literal_(SPARQLQUERY *query, const char *name, const char *language
 
 	(void) query;
 
-	sparqlrow_set_literal_(context->row, name, language, datatype, text);
+	if(sparqlrow_set_literal_(context->row, name, language, datatype, text))
+	{
+		sparql_logf_(context->connection, LOG_CRIT, "failed to bind literal value to result\n");
+		return -1;
+	}
 	return 0;
 }
 
@@ -176,7 +180,11 @@ sparql_query_uri_(SPARQLQUERY *query, const char *name, const char *uri, void *d
 
 	(void) query;
 
-	sparqlrow_set_uri_(context->row, name, uri);
+	if(sparqlrow_set_uri_(context->row, name, uri))
+	{
+		sparql_logf_(context->connection, LOG_CRIT, "failed to bind URI value to result\n");
+		return -1;
+	}
 	return 0;
 }
 
@@ -187,7 +195,11 @@ sparql_query_bnode_(SPARQLQUERY *query, const char *name, const char *ref, void 
 
 	(void) query;
 
-	sparqlrow_set_bnode_(context->row, name, ref);
+	if(sparqlrow_set_bnode_(context->row, name, ref))
+	{
+		sparql_logf_(context->connection, LOG_CRIT, "failed to bind blank node value to result\n");
+		return -1;
+	}
 	return 0;
 }
 
@@ -204,7 +216,11 @@ sparql_query_boolean_(SPARQLQUERY *query, int value, void *data)
 		return -1;
 	}
 	context->has_boolean = 1;
-	sparqlres_set_boolean_(context->results, value);
+	if(sparqlres_set_boolean_(context->results, value))
+	{
+		sparql_logf_(context->connection, LOG_CRIT, "failed to set boolean result value\n");
+		return -1;
+	}
 	return 0;
 }
 
