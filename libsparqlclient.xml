@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <refentry xml:id="libsparqlclient-3" xmlns="http://docbook.org/ns" version="5.0" xml:lang="en">
   <info>
-	<title>SPARQL Client Library</title>
-	<productname>Twine</productname>
+	<productname>SPARQL client library</productname>
 	<authorgroup>
 	  <author>
 		<personname>
@@ -27,6 +26,8 @@
   <refmeta>
 	<refentrytitle>libsparqlclient</refentrytitle>
 	<manvolnum>3</manvolnum>
+	<refmiscinfo class="source">SPARQL client library</refmiscinfo>
+	<refmiscinfo class="manual">Library functions</refmiscinfo>
   </refmeta>
 
   <refnamediv>
