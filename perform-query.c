@@ -277,13 +277,13 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 {
 	SPARQLQUERY *query = (SPARQLQUERY *) ctx;
 	size_t i, l;
+	int c;
 	char *p;
 
 	(void) prefix;
 	(void) nb_namespaces;
 	(void) namespaces;
 	(void) nb_defaulted;
-	(void) nb_attributes;
 	
 	if(query->result)
 	{
@@ -343,7 +343,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 		{
 			query->state = SQS_LINK;
 			p = NULL;
-			for(i = 0; attributes[i]; i += 5)
+			for(c = i = 0; c < nb_attributes; c++)
 			{
 				if((!attributes[i+2] || !attributes[i+2][0]) &&
 				   !strcmp((const char *) attributes[i], "href"))
@@ -359,6 +359,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 					memcpy(p, attributes[i+3], l);
 					p[l] = 0;
 				}
+				i += 5;
 			}
 			if(p)
 			{
@@ -383,7 +384,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 		{
 			query->state = SQS_VARIABLE;
 			p = NULL;
-			for(i = 0; attributes[i]; i += 5)
+			for(i = c = 0; c < nb_attributes; c++)
 			{
 				if((!attributes[i+2] || !attributes[i+2][0]) &&
 				   !strcmp((const char *) attributes[i], "name"))
@@ -399,6 +400,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 					memcpy(p, attributes[i+3], l);
 					p[l] = 0;
 				}
+				i += 5;
 			}
 			if(p)
 			{
@@ -454,7 +456,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 		{
 			query->state = SQS_BINDING;
 			query->bound = 0;
-			for(i = 0; attributes[i]; i += 5)
+			for(i = c = 0; c < nb_attributes; c++)
 			{
 				if((!attributes[i+2] || !attributes[i+2][0]) &&
 				   !strcmp((const char *) attributes[i], "name"))
@@ -471,6 +473,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 					query->name[l] = 0;
 					break;
 				}
+				i += 5;
 			}
 			if(!query->name)
 			{
@@ -498,7 +501,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 		else if(!strcmp((const char *) localname, "literal"))
 		{
 			query->state = SQS_LITERAL;
-			for(i = 0; attributes[i]; i += 5)
+			for(i = c = 0; c < nb_attributes; c++)
 			{
 				if((!attributes[i+2] || !attributes[i+2][0]) &&
 				   !strcmp((const char *) attributes[i], "datatype"))
@@ -529,6 +532,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 					memcpy(query->language, attributes[i+3], l);
 					query->language[l] = 0;
 				}
+				i += 5;
 			}
 		}
 		else if(!strcmp((const char *) localname, "bnode"))
