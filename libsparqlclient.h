@@ -43,9 +43,10 @@ int sparql_set_logger(SPARQL *connection, sparql_logger_fn logger);
 int sparql_set_verbose(SPARQL *connection, int verbose);
 int sparql_set_world(SPARQL *connection, librdf_world *world);
 librdf_world *sparql_world(SPARQL *connection);
+librdf_storage *sparql_storage(SPARQL *connection);
 
 SPARQLRES *sparql_query(SPARQL *connection, const char *query, size_t length);
-librdf_model *sparql_query_model(SPARQL *connection, const char *query, size_t length);
+int sparql_query_model(SPARQL *connection, const char *querybuf, size_t length, librdf_model *model);
 int sparql_update(SPARQL *connection, const char *statement, size_t length);
 int sparql_put(SPARQL *connection, const char *graph, const char *turtle, size_t length);
 

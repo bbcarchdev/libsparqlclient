@@ -29,7 +29,7 @@ include_HEADERS = libsparqlclient.h
 lib_LTLIBRARIES = libsparqlclient.la
 
 libsparqlclient_la_SOURCES = p_libsparqlclient.h libsparqlclient.h \
-	connection.c update.c query.c datastore-put.c \
+	connection.c update.c query.c query-model.c datastore-put.c \
 	perform-query.c resultset.c urlencode.c
 
 libsparqlclient_la_LDFLAGS = -avoid-version
