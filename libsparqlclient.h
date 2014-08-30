@@ -49,6 +49,9 @@ SPARQLRES *sparql_query(SPARQL *connection, const char *query, size_t length);
 int sparql_query_model(SPARQL *connection, const char *querybuf, size_t length, librdf_model *model);
 int sparql_update(SPARQL *connection, const char *statement, size_t length);
 int sparql_put(SPARQL *connection, const char *graph, const char *turtle, size_t length);
+int sparql_insert(SPARQL *connection, const char *triples, size_t len, const char *graphuri);
+int sparql_insert_stream(SPARQL *connection, librdf_stream *stream, const char *graphuri);
+int sparql_insert_model(SPARQL *connection, librdf_model *model);
 
 int sparqlres_is_boolean(SPARQLRES *res);
 int sparqlres_boolean(SPARQLRES *res);
