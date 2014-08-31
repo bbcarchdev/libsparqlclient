@@ -88,6 +88,30 @@ sparql_query_model(SPARQL *connection, const char *querybuf, size_t length, libr
 	return r;
 }
 
+int
+sparql_vqueryf_model(SPARQL *connection, librdf_model *model, const char *format, va_list ap)
+{
+	char *query;
+	int r;
+
+	if(sparql_vasprintf_(connection, &query, format, ap) < 0)
+	{
+		return -1;
+	}
+	r = sparql_query_model(connection, query, strlen(query), model);
+	free(query);
+	return 0;
+}
+
+int
+sparql_queryf_model(SPARQL *connection, librdf_model *model, const char *format, ...)
+{
+	va_list ap;
+
+	va_start(ap, format);
+	return sparql_vqueryf_model(connection, model, format, ap);
+}
+
 static int 
 sparql_query_variable_(SPARQLQUERY *query, const char *name, void *data)
 {

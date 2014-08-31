@@ -22,10 +22,12 @@
 
 # include <stddef.h>
 # include <stdlib.h>
+# include <stdarg.h>
 # include <string.h>
 # include <ctype.h>
 # include <errno.h>
 # include <syslog.h>
+# include <assert.h>
 # include <curl/curl.h>
 # include <libxml/parser.h>
 
@@ -95,5 +97,7 @@ SPARQLROW *sparqlrow_create_(SPARQLRES *res);
 int sparqlrow_set_uri_(SPARQLROW *row, const char *binding, const char *uri);
 int sparqlrow_set_literal_(SPARQLROW *row, const char *binding, const char *language, const char *datatype, const char *value);
 int sparqlrow_set_bnode_(SPARQLROW *row, const char *binding, const char *ref);
+
+int sparql_vasprintf_(SPARQL *restrict connection, char *restrict *ptr, const char *restrict format_string, va_list vargs);
 
 #endif /*!P_LIBSPARQLCLIENT_H_*/

@@ -85,6 +85,30 @@ sparql_query(SPARQL *connection, const char *querybuf, size_t length)
 	return context.results;
 }
 
+SPARQLRES *
+sparql_vqueryf(SPARQL *connection, const char *format, va_list ap)
+{
+	char *buf;
+	SPARQLRES *result;
+	
+	if(sparql_vasprintf_(connection, &buf, format, ap) < 0)
+	{
+		return NULL;
+	}
+	result = sparql_query(connection, buf, strlen(buf));
+	free(buf);
+	return result;
+}
+
+SPARQLRES *
+sparql_queryf(SPARQL *connection, const char *format, ...)
+{
+	va_list ap;
+	
+	va_start(ap, format);
+	return sparql_vqueryf(connection, format, ap);
+}
+
 static int 
 sparql_query_variable_(SPARQLQUERY *query, const char *name, void *data)
 {

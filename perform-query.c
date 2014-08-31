@@ -217,7 +217,7 @@ sparql_query_perform_(SPARQLQUERY *query, const char *statement, size_t length)
 	sprintf(buf, "%s?query=", query->connection->query_uri);
 	t = strchr(buf, 0);
 	sparql_urlencode_l_(statement, length, t, buflen);
-	sparql_logf_(query->connection, LOG_DEBUG, "performing GET from %s\n", buf);
+	sparql_logf_(query->connection, LOG_DEBUG, "SPARQL: %.*s\n", length, statement);
 	curl_easy_setopt(query->ch, CURLOPT_VERBOSE, query->connection->verbose);
 	curl_easy_setopt(query->ch, CURLOPT_URL, buf);
 	curl_easy_setopt(query->ch, CURLOPT_WRITEDATA, (void *) query);

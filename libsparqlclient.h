@@ -46,8 +46,17 @@ librdf_world *sparql_world(SPARQL *connection);
 librdf_storage *sparql_storage(SPARQL *connection);
 
 SPARQLRES *sparql_query(SPARQL *connection, const char *query, size_t length);
+SPARQLRES *sparql_vqueryf(SPARQL *connection, const char *format, va_list ap);
+SPARQLRES *sparql_queryf(SPARQL *connection, const char *format, ...);
+
 int sparql_query_model(SPARQL *connection, const char *querybuf, size_t length, librdf_model *model);
+int sparql_vqueryf_model(SPARQL *connection, librdf_model *model, const char *format, va_list ap);
+int sparql_queryf_model(SPARQL *connection, librdf_model *model, const char *format, ...);
+
 int sparql_update(SPARQL *connection, const char *statement, size_t length);
+int sparql_vupdatef(SPARQL *connection, const char *format, va_list ap);
+int sparql_updatef(SPARQL *connection, const char *format, ...);
+
 int sparql_put(SPARQL *connection, const char *graph, const char *turtle, size_t length);
 int sparql_insert(SPARQL *connection, const char *triples, size_t len, const char *graphuri);
 int sparql_insert_stream(SPARQL *connection, librdf_stream *stream, const char *graphuri);

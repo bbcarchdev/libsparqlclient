@@ -46,7 +46,6 @@ sparql_update(SPARQL *connection, const char *statement, size_t length)
 	}
 	strcpy(buf, "update=");
 	sparql_urlencode_l_(statement, length, buf + 7, buflen);
-	sparql_logf_(connection, LOG_DEBUG, "SPARQL: performing SPARQL update to %s\n", connection->update_uri);
 	sparql_logf_(connection, LOG_DEBUG, "SPARQL: %.*s\n", length, statement);
 	curl_easy_setopt(ch, CURLOPT_VERBOSE, connection->verbose);
 	curl_easy_setopt(ch, CURLOPT_URL, connection->update_uri);	
@@ -58,6 +57,30 @@ sparql_update(SPARQL *connection, const char *statement, size_t length)
 	free(buf);
 
 	return 0;
+}
+
+int
+sparql_vupdatef(SPARQL *connection, const char *format, va_list ap)
+{
+	char *buf;
+	int r;
+
+	if(sparql_vasprintf_(connection, &buf, format, ap) < 0)
+	{
+		return -1;
+	}
+	r = sparql_update(connection, buf, strlen(buf));
+	free(buf);
+	return r;
+}
+
+int
+sparql_updatef(SPARQL *connection, const char *format, ...)
+{
+	va_list ap;
+
+	va_start(ap, format);
+	return sparql_vupdatef(connection, format, ap);
 }
 
 int
