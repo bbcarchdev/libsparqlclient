@@ -33,6 +33,10 @@
 
 # include "libsparqlclient.h"
 
+# if _STDC_VERSION__ < 199901L && !defined(restrict)
+#  define restrict
+# endif
+
 typedef struct sparql_query_struct SPARQLQUERY;
 typedef enum sparql_parse_state SPARQLSTATE;
 
