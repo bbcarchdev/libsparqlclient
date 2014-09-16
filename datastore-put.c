@@ -55,6 +55,7 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDS, triples);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, length);
 	curl_easy_setopt(ch, CURLOPT_CUSTOMREQUEST, "PUT");
+	curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
 	headers = curl_slist_append(NULL, "Content-type: text/turtle; charset=utf-8");
 	curl_easy_setopt(ch, CURLOPT_HTTPHEADER, headers);
 	curl_easy_perform(ch);

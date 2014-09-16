@@ -52,6 +52,7 @@ sparql_update(SPARQL *connection, const char *statement, size_t length)
 	curl_easy_setopt(ch, CURLOPT_POST, 1);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDS, buf);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, strlen(buf));
+	curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
 	curl_easy_perform(ch);
 	curl_easy_cleanup(ch);
 	free(buf);
