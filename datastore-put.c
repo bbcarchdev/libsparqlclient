@@ -31,16 +31,11 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	struct curl_slist *headers;
 	char *buf, *t;
 	size_t buflen;
+	int r;
 
 	if(!connection->data_uri)
 	{
 		errno = EINVAL;
-		return -1;
-	}
-	ch = curl_easy_init();
-	if(!ch)
-	{
-		sparql_logf_(connection, LOG_ERR, "SPARQL: failed to initialise cURL handle\n");
 		return -1;
 	}
 	buflen = sparql_urlencode_size_(graph);
@@ -49,19 +44,21 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	t = strchr(buf, 0);
 	sparql_urlencode_(graph, t, buflen);
 	sparql_logf_(connection, LOG_DEBUG, "SPARQL: performing PUT to %s\n", buf);
-	curl_easy_setopt(ch, CURLOPT_VERBOSE, connection->verbose);
-	curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
-	curl_easy_setopt(ch, CURLOPT_URL, buf);
+	r = -1;
+	ch = sparql_curl_create_(connection, buf);
+	if(!ch)
+	{
+		return -1;
+	}
 	curl_easy_setopt(ch, CURLOPT_POST, 1);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDS, triples);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, length);
 	curl_easy_setopt(ch, CURLOPT_CUSTOMREQUEST, "PUT");
 	headers = curl_slist_append(NULL, "Content-type: text/turtle; charset=utf-8");
 	curl_easy_setopt(ch, CURLOPT_HTTPHEADER, headers);
-	curl_easy_perform(ch);
+	r = sparql_curl_perform_(ch);
 	free(buf);
 	curl_slist_free_all(headers);
 	curl_easy_cleanup(ch);
-	return 0;
+	return r;
 }
-	

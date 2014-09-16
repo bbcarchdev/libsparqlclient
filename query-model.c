@@ -100,7 +100,7 @@ sparql_vqueryf_model(SPARQL *connection, librdf_model *model, const char *format
 	}
 	r = sparql_query_model(connection, query, strlen(query), model);
 	free(query);
-	return 0;
+	return r;
 }
 
 int

@@ -71,10 +71,9 @@ sparql_query_create_(SPARQL *connection)
 		return NULL;
 	}	
 	p->connection = connection;
-	p->ch = curl_easy_init();
+	p->ch = sparql_curl_create_(connection, NULL);
 	if(!p->ch)
 	{
-		sparql_logf_(connection, LOG_CRIT, "failed to initialise cURL handle\n");
 		free(p);
 		return NULL;
 	}
@@ -218,7 +217,6 @@ sparql_query_perform_(SPARQLQUERY *query, const char *statement, size_t length)
 	t = strchr(buf, 0);
 	sparql_urlencode_l_(statement, length, t, buflen);
 	sparql_logf_(query->connection, LOG_DEBUG, "SPARQL: %.*s\n", length, statement);
-	curl_easy_setopt(query->ch, CURLOPT_VERBOSE, query->connection->verbose);
 	curl_easy_setopt(query->ch, CURLOPT_URL, buf);
 	curl_easy_setopt(query->ch, CURLOPT_WRITEDATA, (void *) query);
 	curl_easy_setopt(query->ch, CURLOPT_WRITEFUNCTION, sparql_query_write_);
@@ -226,12 +224,17 @@ sparql_query_perform_(SPARQLQUERY *query, const char *statement, size_t length)
 	curl_easy_setopt(query->ch, CURLOPT_HTTPHEADER, headers);
 	query->result = 0;
 	query->state = SQS_ROOT;
-	curl_easy_perform(query->ch);
-	curl_slist_free_all(headers);
-	if(sparql_query_write_((char *) "", 0, 0, (void *) query))
+	if(sparql_curl_perform_(query->ch))
 	{
 		query->result = -1;
 	}
+	else if(sparql_query_write_((char *) "", 0, 0, (void *) query))
+	{
+		query->result = -1;
+	}
+	curl_slist_free_all(headers);
+	free(buf);
+
 	if(query->result)
 	{
 		if(query->error)

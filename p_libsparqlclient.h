@@ -104,4 +104,7 @@ int sparqlrow_set_bnode_(SPARQLROW *row, const char *binding, const char *ref);
 
 int sparql_vasprintf_(SPARQL *restrict connection, char *restrict *ptr, const char *restrict format_string, va_list vargs);
 
+CURL *sparql_curl_create_(SPARQL *connection, const char *url);
+int sparql_curl_perform_(CURL *ch);
+
 #endif /*!P_LIBSPARQLCLIENT_H_*/

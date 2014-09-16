@@ -29,13 +29,9 @@ sparql_update(SPARQL *connection, const char *statement, size_t length)
 	CURL *ch;
 	char *buf;
 	size_t buflen;
+	int r;
 
-	ch = curl_easy_init();
-	if(!ch)
-	{
-		sparql_logf_(connection, LOG_CRIT, "SPARQL: failed to initialise cURL handle\n");
-		return -1;
-	}
+	ch = sparql_curl_create_(connection, connection->update_uri);
 	buflen = sparql_urlencode_lsize_(statement, length);
 	buf = (char *) malloc(16 + buflen);
 	if(!buf)
@@ -47,17 +43,13 @@ sparql_update(SPARQL *connection, const char *statement, size_t length)
 	strcpy(buf, "update=");
 	sparql_urlencode_l_(statement, length, buf + 7, buflen);
 	sparql_logf_(connection, LOG_DEBUG, "SPARQL: %.*s\n", length, statement);
-	curl_easy_setopt(ch, CURLOPT_VERBOSE, connection->verbose);
-	curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
-	curl_easy_setopt(ch, CURLOPT_URL, connection->update_uri);	
 	curl_easy_setopt(ch, CURLOPT_POST, 1);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDS, buf);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, strlen(buf));
-	curl_easy_perform(ch);
+	r = sparql_curl_perform_(ch);
 	curl_easy_cleanup(ch);
 	free(buf);
-
-	return 0;
+	return r;
 }
 
 int
