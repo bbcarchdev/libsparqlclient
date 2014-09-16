@@ -50,12 +50,12 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	sparql_urlencode_(graph, t, buflen);
 	sparql_logf_(connection, LOG_DEBUG, "SPARQL: performing PUT to %s\n", buf);
 	curl_easy_setopt(ch, CURLOPT_VERBOSE, connection->verbose);
+	curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
 	curl_easy_setopt(ch, CURLOPT_URL, buf);
 	curl_easy_setopt(ch, CURLOPT_POST, 1);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDS, triples);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, length);
 	curl_easy_setopt(ch, CURLOPT_CUSTOMREQUEST, "PUT");
-	curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
 	headers = curl_slist_append(NULL, "Content-type: text/turtle; charset=utf-8");
 	curl_easy_setopt(ch, CURLOPT_HTTPHEADER, headers);
 	curl_easy_perform(ch);

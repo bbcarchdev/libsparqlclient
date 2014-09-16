@@ -48,11 +48,11 @@ sparql_update(SPARQL *connection, const char *statement, size_t length)
 	sparql_urlencode_l_(statement, length, buf + 7, buflen);
 	sparql_logf_(connection, LOG_DEBUG, "SPARQL: %.*s\n", length, statement);
 	curl_easy_setopt(ch, CURLOPT_VERBOSE, connection->verbose);
+	curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
 	curl_easy_setopt(ch, CURLOPT_URL, connection->update_uri);	
 	curl_easy_setopt(ch, CURLOPT_POST, 1);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDS, buf);
 	curl_easy_setopt(ch, CURLOPT_POSTFIELDSIZE, strlen(buf));
-	curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
 	curl_easy_perform(ch);
 	curl_easy_cleanup(ch);
 	free(buf);
