@@ -2,7 +2,7 @@ Source: libsparqlclient
 Section: web
 Priority: extra
 Maintainer: Mo McRoberts <mo.mcroberts@bbc.co.uk>
-Build-Depends: debhelper (>= 8.0.0), autoconf, automake, libtool, libxml2-dev, libcurl4-openssl-dev, librdf0-dev
+Build-Depends: debhelper (>= 8.0.0), autoconf, automake, libtool, libxml2-dev, libcurl4-gnutls-dev, librdf0-dev
 
 Package: libsparqlclient
 Architecture: any
