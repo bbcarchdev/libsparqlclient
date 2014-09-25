@@ -3,6 +3,10 @@ Section: web
 Priority: extra
 Maintainer: Mo McRoberts <mo.mcroberts@bbc.co.uk>
 Build-Depends: debhelper (>= 8.0.0), autoconf, automake, libtool, libxml2-dev, libcurl4-gnutls-dev, librdf0-dev, libltdl-dev
+Standards-Version: 3.9.3
+Homepage: https://bbcarchdev.github.io/res/code
+Vcs-Browser: https://github.com/bbcarchdev/libsparqlclient
+Vcs-Git: git://github.com/bbcarchdev/libsparqlclient.git
 
 Package: libsparqlclient
 Architecture: any
