@@ -1,0 +1,5 @@
+usr/lib/libsparqlclient.a
+usr/lib/pkgconfig/libsparqlclient.pc
+usr/include/libsparqlclient.h
+usr/bin/libsparqlclient-config
+usr/share/man/libsparqlclient.3
