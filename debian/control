@@ -11,11 +11,11 @@ Description: SPARQL client library
 
 Package: libsparqlclient-dev
 Architecture: any
-Depends: ${misc:Depends}, liburi
+Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient, librdf0-dev
 Description: SPARQL client library (development files)
 
 Package: sparqlclient-utils
 Architecture: any
-Depends: ${misc:Depends}, liburi
+Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient
 Description: SPARQL client library (command-line utilities)
 
