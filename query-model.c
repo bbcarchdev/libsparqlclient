@@ -3,7 +3,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2014-2015 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -167,6 +167,7 @@ static int
 sparql_query_endresult_(SPARQLQUERY *query, void *data)
 {
 	struct sparql_query_context_struct *context = (struct sparql_query_context_struct *) data;
+	librdf_stream *st;
 
 	(void) query;
 
@@ -177,7 +178,12 @@ sparql_query_endresult_(SPARQLQUERY *query, void *data)
 	}
 	if(context->g)
 	{
-		librdf_model_context_add_statement(context->model, context->g, context->statement);
+		st = librdf_model_find_statements_with_options(context->model, context->statement, context->g, NULL);
+		if(librdf_stream_end(st))
+		{
+			librdf_model_context_add_statement(context->model, context->g, context->statement);
+		}
+		librdf_free_stream(st);
 	}
 	else
 	{
