@@ -2,7 +2,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2014-2015 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -147,6 +147,10 @@ sparql_logf_(SPARQL *connection, int priority, const char *format, ...)
 {
 	va_list ap;
 
+	if(priority == LOG_DEBUG && !(connection->verbose))
+	{
+		return;
+	}		   
 	va_start(ap, format);
 	if(connection->logger)
 	{
