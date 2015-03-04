@@ -2,7 +2,7 @@
 ##
 ##  Author: Mo McRoberts
 ##
-##  Copyright (c) 2014 BBC
+##  Copyright (c) 2014-2015 BBC
 ##
 ##  Licensed under the Apache License, Version 2.0 (the "License");
 ##  you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ AM_MAINTAINER_MODE
 AC_CONFIG_HEADER([config.h])
 
 BT_PROG_XCODE
-AC_PROG_CC
+AC_PROG_CC([clang c99 gcc cc])
+BT_PROG_CC_DEBUG
 BT_PROG_CC_WARN
 
 LT_INIT
