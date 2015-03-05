@@ -254,10 +254,26 @@ static size_t
 sparql_query_write_(char *ptr, size_t size, size_t nemb, void *userdata)
 {
 	SPARQLQUERY *query = (SPARQLQUERY *) userdata;
-	
+	char *type;
+
+	if(query->state == SQS_CAPTURE)
+	{
+		return sparql_curl_dummy_write_(ptr, size, nemb, &(query->connection->capture));
+	}
 	if(query->result || query->state == SQS_ERROR)
 	{
 		return 0;
+	}
+	if(query->state == SQS_ROOT)
+	{
+		type = NULL;
+		curl_easy_getinfo(query->ch, CURLINFO_CONTENT_TYPE, &type);
+		if(!strcmp(type, "text/plain") ||
+		   !strncmp(type, "text/plain;", 11))
+		{
+			query->state = SQS_CAPTURE;
+			return sparql_curl_dummy_write_(ptr, size, nemb, &(query->connection->capture));
+		}	
 	}
 	if(!size)
 	{
@@ -265,7 +281,7 @@ sparql_query_write_(char *ptr, size_t size, size_t nemb, void *userdata)
 		xmlParseChunk(query->ctx, ptr, 0, 1);
 		if(!query->ctx->wellFormed)
 		{
-			sparql_logf_(query->connection,  LOG_ERR, "returned XML document was not well-formed\n");
+			sparql_logf_(query->connection, LOG_ERR, "returned XML document was not well-formed\n");
 			query->result = -1;
 			return -1;
 		}
@@ -300,6 +316,7 @@ sparql_query_sax_startel_(void *ctx, const xmlChar *localname, const xmlChar *pr
 	}
 	switch(query->state)
 	{
+	case SQS_CAPTURE:
 	case SQS_ERROR:
 		query->result = -1;
 		return;
@@ -577,6 +594,7 @@ sparql_query_sax_endel_(void *ctx, const xmlChar *localname, const xmlChar *pref
 	{
 	case SQS_ROOT:
 		break;
+	case SQS_CAPTURE:
 	case SQS_ERROR:
 		query->result = -1;
 		break;

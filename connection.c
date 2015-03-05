@@ -72,6 +72,7 @@ sparql_destroy(SPARQL *connection)
 	free(connection->update_uri);
 	free(connection->data_uri);
 	free(connection->error);
+	free(connection->capture.buf);
 	free(connection);
 	return 0;
 }
@@ -89,7 +90,40 @@ sparql_error(SPARQL *connection)
 	{
 		return connection->error;
 	}
-	return "No error";
+	return "Unknown error";
+}
+
+void
+sparql_set_error_(SPARQL *connection, const char *state, const char *error)
+{
+	char *s;
+	
+	if(error)
+	{
+		s = strdup(error);
+	}
+	else
+	{
+		s = NULL;
+	}
+	if(state)
+	{
+		strncpy(connection->state, state, 5);
+	}
+	if(connection->error)
+	{
+		free(connection->error);
+	}
+	connection->error = s;	
+}
+
+void
+sparql_set_nerror_(SPARQL *connection, int status, const char *error)
+{
+	char buf[32];
+
+	snprintf(buf, sizeof(buf), "%05d", status);
+	sparql_set_error_(connection, buf, error);
 }
 
 int

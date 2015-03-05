@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <syslog.h>
 
 #include "histedit.h"
 #include "libsparqlclient.h"
@@ -118,6 +119,25 @@ prompt(EditLine *el)
 		return "  \"> ";
 	}
 	return "  -> ";
+}
+
+static void
+logger(int level, const char *format, va_list ap)
+{
+	switch(level)
+	{
+	case LOG_DEBUG:
+		printf("[Debug] ");
+		break;
+	case LOG_WARNING:
+		printf("Warning: ");
+		break;
+	case LOG_ERR:
+	case LOG_CRIT:
+		printf("Error: ");
+		break;
+	}
+	vprintf(format, ap);
 }
 
 static int
@@ -524,12 +544,13 @@ exec_builtin(SPARQL *conn, History *hist, char *query)
 			printf("[08000] Specify \"\\c URI\" to establish a new connection\n");
 			return -1;
 		}
-		conn = sparql_create(query);
+		conn = sparql_create(query);		
 		if(!conn)
 		{
 			printf("failed to connect to SPARQL service\n");
 			return -1;
 		}
+		sparql_set_logger(conn, logger);
 		if(sparql_conn)
 		{
 			sparql_destroy(sparql_conn);
@@ -628,6 +649,7 @@ main(int argc, char **argv)
 			fprintf(stderr, "%s: failed to connect to '%s'\n", short_program_name, connect_uri);
 			exit(EXIT_FAILURE);
 		}
+		sparql_set_logger(sparql_conn, logger);
 	}
 	fprintf(stderr, "%s interactive SPARQL shell (%s)\n\n", PACKAGE, VERSION);
 	fprintf(stderr, 

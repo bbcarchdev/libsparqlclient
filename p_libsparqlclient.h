@@ -54,7 +54,15 @@ enum sparql_parse_state
 	SQS_URI,
 	SQS_LITERAL,
 	SQS_BNODE,
-	SQS_BOOLEAN
+	SQS_BOOLEAN,
+	SQS_CAPTURE
+};
+
+struct sparql_capture_struct
+{
+	char *buf;
+	size_t size;
+	size_t pos;
 };
 
 struct sparql_connection_struct
@@ -68,12 +76,16 @@ struct sparql_connection_struct
 	int world_alloc;
 	char state[16];
 	char *error;
+	struct sparql_capture_struct capture;
 };
 
 size_t sparql_urlencode_size_(const char *src);
 size_t sparql_urlencode_lsize_(const char *src, size_t srclen);
 int sparql_urlencode_(const char *src, char *dest, size_t destlen);
 int sparql_urlencode_l_(const char *src, size_t srclen, char *dest, size_t destlen);
+
+void sparql_set_error_(SPARQL *connection, const char *state, const char *error);
+void sparql_set_nerror_(SPARQL *connection, int status, const char *error);
 
 void sparql_logf_(SPARQL *connection, int priority, const char *format, ...);
 
@@ -108,5 +120,6 @@ int sparql_vasprintf_(SPARQL *restrict connection, char *restrict *ptr, const ch
 
 CURL *sparql_curl_create_(SPARQL *connection, const char *url);
 int sparql_curl_perform_(CURL *ch);
+size_t sparql_curl_dummy_write_(char *ptr, size_t size, size_t nemb, void *userdata);
 
 #endif /*!P_LIBSPARQLCLIENT_H_*/
