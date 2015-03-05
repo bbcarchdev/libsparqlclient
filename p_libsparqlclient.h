@@ -2,7 +2,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2014-2015 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,6 +66,8 @@ struct sparql_connection_struct
 	sparql_logger_fn logger;
 	librdf_world *world;
 	int world_alloc;
+	char state[16];
+	char *error;
 };
 
 size_t sparql_urlencode_size_(const char *src);
@@ -98,9 +100,9 @@ int sparqlres_add_variable_(SPARQLRES *res, const char *name);
 int sparqlres_add_link_(SPARQLRES *res, const char *href);
 
 SPARQLROW *sparqlrow_create_(SPARQLRES *res);
-int sparqlrow_set_uri_(SPARQLROW *row, const char *binding, const char *uri);
-int sparqlrow_set_literal_(SPARQLROW *row, const char *binding, const char *language, const char *datatype, const char *value);
-int sparqlrow_set_bnode_(SPARQLROW *row, const char *binding, const char *ref);
+int sparqlrow_set_uri_(SPARQLRES *res, SPARQLROW *row, const char *binding, const char *uri);
+int sparqlrow_set_literal_(SPARQLRES *res, SPARQLROW *row, const char *binding, const char *language, const char *datatype, const char *value);
+int sparqlrow_set_bnode_(SPARQLRES *res, SPARQLROW *row, const char *binding, const char *ref);
 
 int sparql_vasprintf_(SPARQL *restrict connection, char *restrict *ptr, const char *restrict format_string, va_list vargs);
 

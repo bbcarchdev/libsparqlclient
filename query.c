@@ -3,7 +3,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2014-2015 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -189,7 +189,7 @@ sparql_query_literal_(SPARQLQUERY *query, const char *name, const char *language
 
 	(void) query;
 
-	if(sparqlrow_set_literal_(context->row, name, language, datatype, text))
+	if(sparqlrow_set_literal_(context->results, context->row, name, language, datatype, text))
 	{
 		sparql_logf_(context->connection, LOG_CRIT, "failed to bind literal value to result\n");
 		return -1;
@@ -204,7 +204,7 @@ sparql_query_uri_(SPARQLQUERY *query, const char *name, const char *uri, void *d
 
 	(void) query;
 
-	if(sparqlrow_set_uri_(context->row, name, uri))
+	if(sparqlrow_set_uri_(context->results, context->row, name, uri))
 	{
 		sparql_logf_(context->connection, LOG_CRIT, "failed to bind URI value to result\n");
 		return -1;
@@ -219,7 +219,7 @@ sparql_query_bnode_(SPARQLQUERY *query, const char *name, const char *ref, void 
 
 	(void) query;
 
-	if(sparqlrow_set_bnode_(context->row, name, ref))
+	if(sparqlrow_set_bnode_(context->results, context->row, name, ref))
 	{
 		sparql_logf_(context->connection, LOG_CRIT, "failed to bind blank node value to result\n");
 		return -1;

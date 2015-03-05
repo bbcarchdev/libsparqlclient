@@ -2,7 +2,7 @@
 ##
 ##  Author: Mo McRoberts
 ##
-##  Copyright (c) 2014 BBC
+##  Copyright (c) 2014-2015 BBC
 ##
 ##  Licensed under the Apache License, Version 2.0 (the "License");
 ##  you may not use this file except in compliance with the License.
@@ -17,6 +17,10 @@
 ##  limitations under the License.
 
 ACLOCAL_AMFLAGS = -I m4
+
+DIST_SUBDIRS = m4 libedit
+
+SUBDIRS = @subdirs@ .
 
 pkgconfigdir = @libdir@/pkgconfig
 
@@ -39,7 +43,7 @@ libsparqlclient_la_LIBADD = @LIBCURL_LOCAL_LIBS@ @LIBCURL_LIBS@ \
 	@LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@ \
 	@PTHREAD_LOCAL_LIBS@ @PTHREAD_LIBS@
 
-bin_PROGRAMS = libsparqlclient-config sparql-query
+bin_PROGRAMS = libsparqlclient-config sparql-query isparql
 
 libsparqlclient_config_SOURCES = libsparqlclient-config.c
 
@@ -54,3 +58,8 @@ libsparqlclient.3: $(srcdir)/libsparqlclient.xml
 
 sparql_query_SOURCES = sparql-query.c
 sparql_query_LDADD = libsparqlclient.la @LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@
+
+isparql_SOURCES = isparql.c
+isparql_LDADD = libsparqlclient.la \
+	@LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@ \
+	@LIBEDIT_LOCAL_LIBS@ @LIBEDIT_LIBS@

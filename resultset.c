@@ -3,7 +3,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2014-2015 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,8 @@ struct sparql_results_struct
 	int boolean;
 	char **variables;
 	size_t varcount;
-	size_t varsize;	
+	size_t varsize;
+	size_t *widths;
 	SPARQLROW *rows;
 	size_t rowcount;
 	size_t rowsize;
@@ -45,6 +46,8 @@ struct sparql_row_struct
 	SPARQLRES *results;
 	librdf_node **nodes;
 };
+
+static int sparqlrow_set_node_(SPARQLRES *res, SPARQLROW *row, size_t index, librdf_node *node);
 
 SPARQLRES *
 sparqlres_create_(SPARQL *connection)
@@ -228,6 +231,22 @@ sparqlres_next(SPARQLRES *res)
 	return &(res->rows[res->current]);
 }
 
+size_t
+sparqlres_rows(SPARQLRES *res)
+{
+	return res->rowcount;
+}
+
+size_t
+sparqlres_width(SPARQLRES *res, size_t index)
+{
+	if(index > res->varcount)
+	{
+		return 0;
+	}
+	return res->widths[index];
+}
+
 int
 sparqlres_destroy(SPARQLRES *res)
 {
@@ -255,6 +274,7 @@ sparqlres_destroy(SPARQLRES *res)
 		free(res->rows[i].nodes);
 	}
 	free(res->rows);
+	free(res->widths);
 	free(res);
 	return 0;
 }
@@ -295,8 +315,9 @@ sparqlrow_create_(SPARQLRES *res)
 }
 
 int
-sparqlrow_set_uri_(SPARQLROW *row, const char *binding, const char *uri)
+sparqlrow_set_uri_(SPARQLRES *res, SPARQLROW *row, const char *binding, const char *uri)
 {
+	size_t l;
 	ssize_t index;
 	librdf_world *world;
 	librdf_node *node;
@@ -320,17 +341,22 @@ sparqlrow_set_uri_(SPARQLROW *row, const char *binding, const char *uri)
 		sparql_logf_(row->results->connection, LOG_CRIT, "failed to create new URI node\n");
 		return -1;
 	}
-	if(row->nodes[index])
+	if(sparqlrow_set_node_(res, row, index, node))
 	{
-		librdf_free_node(row->nodes[index]);
+		return -1;
 	}
-	row->nodes[index] = node;
+	l = strlen(uri) + 2;
+	if(res->widths[index] < l)
+	{
+		res->widths[index] = l;
+	}
 	return 0;
 }
 
 int
-sparqlrow_set_bnode_(SPARQLROW *row, const char *binding, const char *ref)
+sparqlrow_set_bnode_(SPARQLRES *res, SPARQLROW *row, const char *binding, const char *ref)
 {
+	size_t l;
 	ssize_t index;
 	librdf_world *world;
 	librdf_node *node;
@@ -354,17 +380,22 @@ sparqlrow_set_bnode_(SPARQLROW *row, const char *binding, const char *ref)
 		sparql_logf_(row->results->connection, LOG_CRIT, "failed to create new blank node\n");
 		return -1;
 	}
-	if(row->nodes[index])
+	if(sparqlrow_set_node_(res, row, index, node))
 	{
-		librdf_free_node(row->nodes[index]);
+		return -1;
 	}
-	row->nodes[index] = node;
+	l = strlen(ref) + 3;
+	if(res->widths[index] < l)
+	{
+		res->widths[index] = l;
+	}
 	return 0;
 }
 
 int
-sparqlrow_set_literal_(SPARQLROW *row, const char *binding, const char *language, const char *datatype, const char *value)
+sparqlrow_set_literal_(SPARQLRES *res, SPARQLROW *row, const char *binding, const char *language, const char *datatype, const char *value)
 {
+	size_t l;
 	ssize_t index;
 	librdf_world *world;
 	librdf_node *node;
@@ -406,11 +437,15 @@ sparqlrow_set_literal_(SPARQLROW *row, const char *binding, const char *language
 		sparql_logf_(row->results->connection, LOG_CRIT, "failed to create new literal node\n");
 		return -1;
 	}
-	if(row->nodes[index])
+	if(sparqlrow_set_node_(res, row, index, node))
 	{
-		librdf_free_node(row->nodes[index]);
+		return -1;
 	}
-	row->nodes[index] = node;
+	l = strlen(value) + 2 + (language ? strlen(language) + 1 : 0) + (datatype ? strlen(datatype) + 2 : 0);
+	if(res->widths[index] < l)
+	{
+		res->widths[index] = l;
+	}
 	return 0;
 }
 
@@ -432,3 +467,47 @@ sparqlrow_binding(SPARQLROW *row, size_t index)
 	return row->nodes[index];
 }
 
+size_t
+sparqlrow_value(SPARQLROW *row, size_t index, char *buf, size_t buflen)
+{
+	char *str;
+	size_t l;
+
+	if(index >= row->results->varcount)
+	{
+		errno = EINVAL;
+		return (size_t) -1;
+	}
+	str = (char *) librdf_node_to_string(row->nodes[index]);
+	if(buf)
+	{
+		strncpy(buf, str, buflen - 1);
+		buf[buflen - 1] = 0;
+		l = strlen(buf);
+	}
+	else
+	{
+		l = strlen(str);
+	}
+	librdf_free_memory(str);
+	return l;
+}
+
+static int
+sparqlrow_set_node_(SPARQLRES *res, SPARQLROW *row, size_t index, librdf_node *node)
+{
+	if(!res->widths)
+	{
+		res->widths = (size_t *) calloc(res->varcount, sizeof(size_t));
+		if(!res->widths)
+		{
+			return -1;
+		}
+	}
+	if(row->nodes[index])
+	{
+		librdf_free_node(row->nodes[index]);
+	}
+	row->nodes[index] = node;
+	return 0;
+}

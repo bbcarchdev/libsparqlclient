@@ -41,6 +41,12 @@ BT_BUILD_DOCS
 
 BT_DEFINE_PREFIX
 
+dnl libedit is used only by isparql, don't include it in $LIBS
+BT_REQUIRE_LIBEDIT_INCLUDED([
+AM_CPPFLAGS="$AM_CPPFLAGS $LIBEDIT_CPPFLAGS"
+AM_LDFLAGS="$AM_LDFLAGS $LIBEDIT_LDFLAGS"
+])
+
 AC_CONFIG_FILES([
 Makefile
 libsparqlclient.pc

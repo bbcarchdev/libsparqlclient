@@ -26,18 +26,38 @@
 static int sparql_librdf_logger_(void *data, librdf_log_message *message);
 
 SPARQL *
-sparql_create(void *reserved)
+sparql_create(const char *base)
 {
 	SPARQL *p;
-	
-	(void) reserved;
+	size_t l;
 
 	p = (SPARQL *) calloc(1, sizeof(SPARQL));
 	if(!p)
 	{
 		return NULL;
 	}
-	
+	if(base && base[0])
+	{
+		l = strlen(base);
+		p->query_uri = (char *) calloc(1, l + 32);
+		p->update_uri = (char *) calloc(1, l + 32);
+		p->data_uri = (char *) calloc(1, l + 32);
+		if(!p->query_uri || !p->update_uri || !p->data_uri)
+		{
+			sparql_destroy(p);
+			return NULL;
+		}
+		if(base[l - 1] == '/')
+		{
+			l--;
+		}
+		strcpy(p->query_uri, base);
+		strcpy(&(p->query_uri[l]), "/sparql/");
+		strcpy(p->update_uri, base);
+		strcpy(&(p->update_uri[l]), "/update/");
+		strcpy(p->data_uri, base);
+		strcpy(&(p->data_uri[l]), "/data/");
+	}
 	return p;
 }
 
@@ -51,8 +71,25 @@ sparql_destroy(SPARQL *connection)
 	free(connection->query_uri);
 	free(connection->update_uri);
 	free(connection->data_uri);
+	free(connection->error);
 	free(connection);
 	return 0;
+}
+
+const char *
+sparql_state(SPARQL *connection)
+{
+	return connection->state;
+}
+
+const char *
+sparql_error(SPARQL *connection)
+{
+	if(connection->error)
+	{
+		return connection->error;
+	}
+	return "No error";
 }
 
 int

@@ -2,7 +2,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2014-2015 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ extern "C" {
 
 typedef void (*sparql_logger_fn)(int priority, const char *format, va_list args);
 
-SPARQL *sparql_create(void *reserved);
+SPARQL *sparql_create(const char *baseuri);
 int sparql_destroy(SPARQL *connection);
 int sparql_set_query_uri(SPARQL *connection, const char *uri);
 int sparql_set_data_uri(SPARQL *connection, const char *uri);
@@ -44,6 +44,9 @@ int sparql_set_verbose(SPARQL *connection, int verbose);
 int sparql_set_world(SPARQL *connection, librdf_world *world);
 librdf_world *sparql_world(SPARQL *connection);
 librdf_storage *sparql_storage(SPARQL *connection);
+
+const char *sparql_state(SPARQL *connection);
+const char *sparql_error(SPARQL *connection);
 
 SPARQLRES *sparql_query(SPARQL *connection, const char *query, size_t length);
 SPARQLRES *sparql_vqueryf(SPARQL *connection, const char *format, va_list ap);
@@ -72,9 +75,12 @@ const char *sparqlres_link(SPARQLRES *res, size_t index);
 int sparqlres_reset(SPARQLRES *res);
 SPARQLROW *sparqlres_next(SPARQLRES *res);
 int sparqlres_destroy(SPARQLRES *res);
+size_t sparqlres_width(SPARQLRES *res, size_t index);
+size_t sparqlres_rows(SPARQLRES *res);
 
 size_t sparqlrow_bindings(SPARQLROW *row);
 librdf_node *sparqlrow_binding(SPARQLROW *row, size_t index);
+size_t sparqlrow_value(SPARQLROW *row, size_t index, char *buf, size_t bufsize);
 
 # ifdef __cplusplus
 }

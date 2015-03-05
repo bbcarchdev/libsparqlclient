@@ -15,6 +15,7 @@ Makefile
 autom4te.cache
 /libsparqlclient-config
 /sparql-query
+/isparql
 /aclocal.m4
 /config.guess
 /config.h
