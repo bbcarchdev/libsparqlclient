@@ -15,11 +15,17 @@ Description: SPARQL client library
 
 Package: libsparqlclient-dev
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient, librdf0-dev
+Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient (= ${binary:Version}), librdf0-dev
 Description: SPARQL client library (development files)
 
 Package: sparqlclient-utils
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient
+Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient (= ${binary:Version}, isparql (= ${binary:Version})
 Description: SPARQL client library (command-line utilities)
+
+Package: isparql
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient (= ${binary:Version})
+Description: Interactive SPARQL client
+
 
