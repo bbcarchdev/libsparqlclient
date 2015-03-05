@@ -20,7 +20,7 @@ Description: SPARQL client library (development files)
 
 Package: sparqlclient-utils
 Architecture: any
-Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient (= ${binary:Version}, isparql (= ${binary:Version})
+Depends: ${misc:Depends}, ${shlibs:Depends}, libsparqlclient (= ${binary:Version}), isparql (= ${binary:Version})
 Description: SPARQL client library (command-line utilities)
 
 Package: isparql
