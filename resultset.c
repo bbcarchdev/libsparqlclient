@@ -240,7 +240,7 @@ sparqlres_rows(SPARQLRES *res)
 size_t
 sparqlres_width(SPARQLRES *res, size_t index)
 {
-	if(index > res->varcount)
+	if(index > res->varcount || !res->widths)
 	{
 		return 0;
 	}
