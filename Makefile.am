@@ -34,7 +34,8 @@ lib_LTLIBRARIES = libsparqlclient.la
 
 libsparqlclient_la_SOURCES = p_libsparqlclient.h libsparqlclient.h \
 	connection.c update.c query.c query-model.c datastore-put.c \
-	perform-query.c resultset.c urlencode.c vasprintf.c curl.c
+	perform-query.c resultset.c urlencode.c vasprintf.c curl.c \
+	datastore-post.c
 
 libsparqlclient_la_LDFLAGS = -avoid-version
 

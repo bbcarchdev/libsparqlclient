@@ -61,6 +61,7 @@ int sparql_vupdatef(SPARQL *connection, const char *format, va_list ap);
 int sparql_updatef(SPARQL *connection, const char *format, ...);
 
 int sparql_put(SPARQL *connection, const char *graph, const char *turtle, size_t length);
+int sparql_post(SPARQL *connection, const char *graph, const char *turtle, size_t length);
 int sparql_insert(SPARQL *connection, const char *triples, size_t len, const char *graphuri);
 int sparql_insert_stream(SPARQL *connection, librdf_stream *stream, const char *graphuri);
 int sparql_insert_model(SPARQL *connection, librdf_model *model);

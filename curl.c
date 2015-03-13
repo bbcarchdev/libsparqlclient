@@ -1,8 +1,8 @@
-/* SPARQL RDF Datastore - PUT interface
+/* SPARQL RDF Datastore - cURL wrappers
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2014-2015 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,8 +55,15 @@ sparql_curl_perform_(CURL *ch)
 	CURLcode e;
 	SPARQL *connection;
 	long status;
+	struct timeval tv;
+	unsigned long long start;
+	int ms;
 
+	gettimeofday(&tv, NULL);
+	start = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);	
 	e = curl_easy_perform(ch);
+	gettimeofday(&tv, NULL);
+	ms = (int) (((tv.tv_sec * 1000) + (tv.tv_usec / 1000)) - start);
 	connection = NULL;
 	curl_easy_getinfo(ch, CURLINFO_PRIVATE, (char **) (&connection));
 	curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &status);
@@ -70,6 +77,7 @@ sparql_curl_perform_(CURL *ch)
 	}
 	if(e == CURLE_OK)
 	{
+		sparql_logf_(connection, LOG_DEBUG, "SPARQL: query completed in %dms\n", ms);
 		if(connection)
 		{
 			sparql_set_nerror_(connection, 0, NULL);
