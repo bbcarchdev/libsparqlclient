@@ -69,5 +69,6 @@ EOF
 	$FOURSTORE_ADMIN -c "$DIR/4store.conf" list-stores >&2
 	$FOURSTORE_HTTPD -c "$DIR/4store.conf" -p $port test$port >&2 || exit $?
 	echo "$NAME: 4store running and listening for queries on port $port" >&2
+	cat "$DIR/environment" >&2
 	cat "$DIR/environment"
 fi
