@@ -31,3 +31,4 @@ autom4te.cache
 /libsparqlclient-config
 /sparql-query
 /isparql
+/test-driver

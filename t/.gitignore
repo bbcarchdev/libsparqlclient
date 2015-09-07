@@ -1,0 +1,4 @@
+*.trs
+*.log
+/setup-4store.sh
+/teardown-4store.sh

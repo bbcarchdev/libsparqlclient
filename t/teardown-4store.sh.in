@@ -1,0 +1,35 @@
+#! /bin/sh
+
+## This script is invoked by the automake hooks once tests have run, in order
+## to cleanly tear down the 4store environment we started to run tests against
+
+DIR="`pwd`/4store-test-backend"
+
+FOURSTORE_BOSS="@FOURSTORE_BOSS@"
+FOURSTORE_ADMIN="@FOURSTORE_ADMIN@"
+
+if test -d "$DIR" ; then
+	. "$DIR/environment"
+	while true ; do
+		pid=`ps -A -f | grep 4s-httpd | grep "$FOURSTORE_PORT" | head -1 | cut -f2 -d' '`
+		if test x"$pid" = x"" ; then
+			break
+		fi
+		echo "$0: shutting down 4s-httpd[$pid] on port $FOURSTORE_PORT" >&2
+		kill "$pid"
+		sleep 1
+		kill -9 "$pid" 2>/dev/null
+	done
+	"$FOURSTORE_ADMIN" -c "$DIR/4store.conf" stop-stores -a
+	sleep 1
+	if test x"$FOURSTORE_BOSS_PID" = x"" ; then
+		echo "$0: no PID found for 4s-boss; skipping shutdown" >&2
+	else
+		kill -9 "$FOURSTORE_BOSS_PID"
+	fi
+	rm -rf "$DIR"
+else
+	echo "$0: (warning) no 4store backend found, skipping teardown" >&2
+fi
+
+

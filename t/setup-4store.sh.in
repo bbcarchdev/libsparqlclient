@@ -1,0 +1,73 @@
+#! /bin/sh
+
+## The output of this script is evaluated when 'make check' is invoked in
+## order to set up the test environment.
+
+NAME=setup-4store.sh
+DIR="`pwd`/4store-test-backend"
+PYTHON=@PYTHON@
+FOURSTORE_BACKEND_SETUP=@FOURSTORE_BACKEND_SETUP@
+FOURSTORE_HTTPD=@FOURSTORE_HTTPD@
+FOURSTORE_BOSS=@FOURSTORE_BOSS@
+FOURSTORE_ADMIN=@FOURSTORE_ADMIN@
+
+if test -d "$DIR" ; then
+	cat "$DIR/environment"
+else
+	port=`$PYTHON -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()'`
+	if test x"$port" = x"" ; then
+		echo "$NAME: failed to obtain a free port to bind 4s-httpd to" >&2
+		exit 1
+	fi
+	boss_port=`$PYTHON -c 'import socket; s=socket.socket(); s.bind(("", 0)); print(s.getsockname()[1]); s.close()'`
+	if test x"$boss_port" = x"" ; then
+		echo "$NAME: failed to obtain a free port to bind 4s-boss to" >&2
+		exit 1
+	fi
+	mkdir "$DIR" || exit $?
+	mkdir "$DIR/kb" || exit $?
+	FS_STORE_ROOT="$DIR/kb"
+	export FS_STORE_ROOT
+	FOURSTORE_KB="test$port"
+	export FOURSTORE_KB
+	$FOURSTORE_BACKEND_SETUP --node 0 --cluster 1 --segments 1 $FOURSTORE_KB >&2 || exit $?
+	cat > "$DIR/4store.conf" <<EOF
+[4s-boss]
+discovery = sole
+nodes = 127.0.0.1
+port = $boss_port
+
+[test$port]
+port = $port
+opt-level = 3
+soft-limit = 0
+default-graph = false
+EOF
+	cat > "$DIR/environment" <<EOF
+FOURSTORE_PORT=$port
+export FOURSTORE_PORT
+FOURSTORE_BOSS_PORT=$boss_port
+export FOURSTORE_BOSS_PORT
+FOURSTORE_KB=test$port
+export FOURSTORE_KB
+FS_STORE_ROOT='$DIR/kb'
+export FS_STORE_ROOT
+EOF
+	$FOURSTORE_BOSS -p "$boss_port" -c "$DIR/4store.conf" --verbose >&2 || exit $?
+	sleep 1
+	boss_pid=`ps -A -f | grep 4s-boss | grep "$boss_port" | cut -f2 -d' '`
+	if test x"$boss_port" = x"" ; then
+		echo "$NAME: unable to determine PID of 4s-boss process" >&2
+		exit 1
+	fi
+	cat >>"$DIR/environment" <<EOF
+FOURSTORE_BOSS_PID=$boss_pid
+export FOURSTORE_BOSS_PID
+EOF
+	$FOURSTORE_ADMIN -c "$DIR/4store.conf" start-stores test$port >&2 || exit $?
+	sleep 1
+	$FOURSTORE_ADMIN -c "$DIR/4store.conf" list-stores >&2
+	$FOURSTORE_HTTPD -c "$DIR/4store.conf" -p $port test$port >&2 || exit $?
+	echo "$NAME: 4store running and listening for queries on port $port" >&2
+	cat "$DIR/environment"
+fi

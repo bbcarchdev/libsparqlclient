@@ -18,9 +18,9 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-DIST_SUBDIRS = m4 libedit
+DIST_SUBDIRS = m4 libedit t
 
-SUBDIRS = @subdirs@ .
+SUBDIRS = @subdirs@ . t
 
 pkgconfigdir = @libdir@/pkgconfig
 
