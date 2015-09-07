@@ -13,9 +13,6 @@
 Makefile.in
 Makefile
 autom4te.cache
-/libsparqlclient-config
-/sparql-query
-/isparql
 /aclocal.m4
 /config.guess
 /config.h
@@ -25,9 +22,12 @@ autom4te.cache
 /config.sub
 /configure
 /depcomp
+/compile
 /install-sh
 /libtool
 /ltmain.sh
 /missing
 /stamp-h1
-/twine.conf
+/libsparqlclient-config
+/sparql-query
+/isparql
