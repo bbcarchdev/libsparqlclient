@@ -1,5 +1,0 @@
-#! /bin/sh
-
-echo "This is 001-empty.sh using 4store on port $FOURSTORE_PORT" >&2
-
-exit 0

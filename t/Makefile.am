@@ -34,6 +34,6 @@ clean-local:
 
 if RUN_TESTS
 
-TESTS = 001-empty
+TESTS = 000-sanity
 
 endif
