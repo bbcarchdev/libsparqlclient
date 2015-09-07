@@ -467,6 +467,16 @@ sparqlrow_binding(SPARQLROW *row, size_t index)
 	return row->nodes[index];
 }
 
+/* Copy at most buflen bytes of the value of result field index into
+ * buf. A null terminator will always be added unless buf is null or buflen
+ * is zero.
+ *
+ * The return value is:
+ * -1 if an error occurs (note that this is cast to size_t)
+ *  0 if there is no value (shouldn't ordinarily occur)
+ *    otherwise, the number of bytes required to hold the value and the
+ *    null terminator.
+ */
 size_t
 sparqlrow_value(SPARQLROW *row, size_t index, char *buf, size_t buflen)
 {
@@ -479,15 +489,18 @@ sparqlrow_value(SPARQLROW *row, size_t index, char *buf, size_t buflen)
 		return (size_t) -1;
 	}
 	str = (char *) librdf_node_to_string(row->nodes[index]);
-	if(buf)
+	if(str)
 	{
-		strncpy(buf, str, buflen - 1);
-		buf[buflen - 1] = 0;
-		l = strlen(buf);
+		l = strlen(str) + 1;
 	}
 	else
 	{
-		l = strlen(str);
+		l = 0;
+	}
+	if(buf && buflen)
+	{
+		strncpy(buf, str, buflen - 1);
+		buf[buflen - 1] = 0;
 	}
 	librdf_free_memory(str);
 	return l;
