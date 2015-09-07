@@ -20,7 +20,7 @@ LDADD = @top_builddir@/libsparqlclient.la
 
 dist_noinst_SCRIPTS = setup-4store.sh teardown-4store.sh
 
-AM_TESTS_ENVIRONMENT = eval `$(CONFIG_SHELL) ./setup-4store.sh` ;
+TESTS_ENVIRONMENT = eval `$(CONFIG_SHELL) ./setup-4store.sh` ;
 
 EXTRA_DIST = setup-4store.sh.in teardown-4store.sh.in
 
