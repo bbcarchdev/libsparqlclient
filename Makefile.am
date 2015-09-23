@@ -41,6 +41,7 @@ libsparqlclient_la_LDFLAGS = -avoid-version
 
 libsparqlclient_la_LIBADD = @LIBCURL_LOCAL_LIBS@ @LIBCURL_LIBS@ \
 	@LIBXML2_LOCAL_LIBS@ @LIBXML2_LIBS@ \
+	@LIBRAPTOR2_LOCAL_LIBS@ @LIBRAPTOR2_LIBS@ \
 	@LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@ \
 	@PTHREAD_LOCAL_LIBS@ @PTHREAD_LIBS@
 
@@ -58,9 +59,12 @@ libsparqlclient.3: $(srcdir)/libsparqlclient.xml
 	$(XML2MAN) $<
 
 sparql_query_SOURCES = sparql-query.c
-sparql_query_LDADD = libsparqlclient.la @LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@
+sparql_query_LDADD = libsparqlclient.la \
+	@LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@ \
+	@LIBRAPTOR2_LOCAL_LIBS@ @LIBRAPTOR2_LIBS@
 
 isparql_SOURCES = isparql.c
 isparql_LDADD = libsparqlclient.la \
 	@LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@ \
+	@LIBRAPTOR2_LOCAL_LIBS@ @LIBRAPTOR2_LIBS@ \
 	@LIBEDIT_LOCAL_LIBS@ @LIBEDIT_LIBS@
