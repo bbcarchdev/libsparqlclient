@@ -48,6 +48,7 @@ struct sparql_row_struct
 };
 
 static int sparqlrow_set_node_(SPARQLRES *res, SPARQLROW *row, size_t index, librdf_node *node);
+static char *sparqlrow_node_string_(SPARQLROW *row, librdf_node *node);
 
 SPARQLRES *
 sparqlres_create_(SPARQL *connection)
@@ -488,7 +489,7 @@ sparqlrow_value(SPARQLROW *row, size_t index, char *buf, size_t buflen)
 		errno = EINVAL;
 		return (size_t) -1;
 	}
-	str = (char *) librdf_node_to_string(row->nodes[index]);
+	str = sparqlrow_node_string_(row, row->nodes[index]);
 	if(str)
 	{
 		l = strlen(str) + 1;
@@ -502,7 +503,7 @@ sparqlrow_value(SPARQLROW *row, size_t index, char *buf, size_t buflen)
 		strncpy(buf, str, buflen - 1);
 		buf[buflen - 1] = 0;
 	}
-	librdf_free_memory(str);
+	free(str);
 	return l;
 }
 
@@ -523,4 +524,29 @@ sparqlrow_set_node_(SPARQLRES *res, SPARQLROW *row, size_t index, librdf_node *n
 	}
 	row->nodes[index] = node;
 	return 0;
+}
+
+static char *
+sparqlrow_node_string_(SPARQLROW *row, librdf_node *node)
+{
+	raptor_world *world;
+	raptor_iostream *stream;
+	char *buf;
+	int r;
+
+	world = librdf_world_get_raptor(row->results->connection->world);
+	buf = NULL;
+	stream = raptor_new_iostream_to_string(world, (void **) &buf, NULL, malloc);
+	if(!stream)
+	{
+		return NULL;
+	}
+	r = librdf_node_write(node, stream);
+	raptor_free_iostream(stream);
+	if(r)
+	{
+		free(buf);
+		return NULL;
+	}
+	return buf;
 }

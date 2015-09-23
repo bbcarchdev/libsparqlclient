@@ -3,7 +3,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2014-2015 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@
 #include <stdarg.h>
 
 #include "libsparqlclient.h"
+
+static char *node_to_string(SPARQL *sparql, librdf_node *node);
 
 void
 logger(int priority, const char *format, va_list ap)
@@ -84,7 +86,7 @@ main(int argc, char **argv)
 			node = sparqlrow_binding(row, index);
 			if(node)
 			{
-				printf("%s: %s\n", sparqlres_variable(result, index), librdf_node_to_string(node));
+				printf("%s: %s\n", sparqlres_variable(result, index), node_to_string(sparql, node));
 			}
 			else
 			{
@@ -96,4 +98,29 @@ main(int argc, char **argv)
 	sparqlres_destroy(result);
 	sparql_destroy(sparql);
 	return 0;
+}
+
+static char *
+node_to_string(SPARQL *sparql, librdf_node *node)
+{
+	raptor_world *world;
+	raptor_iostream *stream;
+	char *buf;
+	int r;
+
+	world = librdf_world_get_raptor(sparql_world(sparql));
+	buf = NULL;
+	stream = raptor_new_iostream_to_string(world, (void **) &buf, NULL, malloc);
+	if(!stream)
+	{
+		return NULL;
+	}
+	r = librdf_node_write(node, stream);
+	raptor_free_iostream(stream);
+	if(r)
+	{
+		free(buf);
+		return NULL;
+	}
+	return buf;
 }
