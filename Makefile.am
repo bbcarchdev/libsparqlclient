@@ -68,3 +68,17 @@ isparql_LDADD = libsparqlclient.la \
 	@LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@ \
 	@LIBRAPTOR2_LOCAL_LIBS@ @LIBRAPTOR2_LIBS@ \
 	@LIBEDIT_LOCAL_LIBS@ @LIBEDIT_LIBS@
+
+BRANCH ?= develop
+
+DEVELOP_SUBMODULES = m4
+
+checkout:
+	@for submod in $(DEVELOP_SUBMODULES) ; do \
+		echo "+++ Checking out the latest version of $$submod on $(BRANCH)" >&2 ; \
+		cd $$submod && \
+		git checkout $(BRANCH) && \
+		git pull && \
+		$(MAKE) checkout BRANCH=$(BRANCH) || exit $? && \
+		cd .. ; \
+	done
