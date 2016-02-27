@@ -57,6 +57,7 @@ static size_t query_len, query_alloc;
 static struct query_struct *pqueries;
 static size_t pquery_count, pquery_alloc;
 static SPARQL *sparql_conn;
+static int verbose_mode;
 
 static void
 usage(void)
@@ -550,6 +551,7 @@ exec_builtin(SPARQL *conn, History *hist, char *query)
 			printf("failed to connect to SPARQL service\n");
 			return -1;
 		}
+		sparql_set_verbose(conn, verbose_mode);
 		sparql_set_logger(conn, logger);
 		if(sparql_conn)
 		{
@@ -558,6 +560,23 @@ exec_builtin(SPARQL *conn, History *hist, char *query)
 		sparql_conn = conn;
 		return 0;
 	}
+	if(!strncmp(query, "\\v", 2))
+	{
+		verbose_mode ^= ~0;
+		if(sparql_conn)
+		{
+			sparql_set_verbose(sparql_conn, verbose_mode);
+		}
+		if(verbose_mode)
+		{
+			printf("Verbose mode ON\n");
+		}
+		else
+		{
+			printf("Verbose mode OFF\n");
+		}
+		return 0;
+	}	
 	printf("[42000] Unknown command '%s'\n", query);
 	return -1;
 }
@@ -717,6 +736,7 @@ main(int argc, char **argv)
 		"       \\g or ; to execute query\n"
 		"       \\G to execute the query showing results in long format\n"
 		"       \\q to end the SPARQL session\n"
+		"       \\v to toggle verbose mode\n"
 		"\n"
 		);
 	hist = history_init();
