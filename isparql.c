@@ -563,10 +563,50 @@ exec_builtin(SPARQL *conn, History *hist, char *query)
 }
 
 static int
+query_is_update(const char *query, size_t len)
+{
+	static const char *updateverbs[] = {
+		"INSERT", "DELETE", "LOAD", "CLEAR", "CREATE", "DROP", "COPY",
+		"MOVE", "ADD",
+		NULL
+	};
+	const char *verb;
+	size_t c, vl;
+
+	for(verb = query; verb < query + len; verb++)
+	{
+		if(!isspace(*verb))
+		{
+			break;
+		}
+	}
+	if(verb >= query + len)
+	{
+		return 0;
+	}
+	for(vl = 0; verb + vl < query + len; vl++)
+	{
+		if(isspace(verb[vl]))
+		{
+			break;
+		}
+	}
+	for(c = 0; updateverbs[c]; c++)
+	{
+		if(vl == strlen(updateverbs[c]) &&
+		   !strncasecmp(verb, updateverbs[c], vl))
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+static int
 exec_queries(History *hist)
 {
 	HistEvent ev;
-	size_t c;
+	size_t c, l;
 	SPARQLRES *rs;
 	unsigned int cols;
 	unsigned long long rows;
@@ -584,7 +624,18 @@ exec_queries(History *hist)
 			printf("[08003] Not connected to SPARQL database server\n");
 			continue;
 		}
-		rs = sparql_query(sparql_conn, pqueries[c].query, strlen(pqueries[c].query));
+		l = strlen(pqueries[c].query);
+		if(query_is_update(pqueries[c].query, l))
+		{
+			if(sparql_update(sparql_conn, pqueries[c].query, l))
+			{
+				printf("[%s] %s\n", sparql_state(sparql_conn), sparql_error(sparql_conn));
+				return -1;				
+			}
+			printf("OK\n");
+			return 0;
+		}
+		rs = sparql_query(sparql_conn, pqueries[c].query, l);
 		if(!rs)
 		{
 			printf("[%s] %s\n", sparql_state(sparql_conn), sparql_error(sparql_conn));
