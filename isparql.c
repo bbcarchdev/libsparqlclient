@@ -614,6 +614,14 @@ exec_queries(History *hist)
 	for(c = 0; c < pquery_count; c++)
 	{
 		history(hist, &ev, H_ENTER, pqueries[c].query);
+		if(pqueries[c].output_mode == 'G')
+		{
+			history(hist, &ev, H_ADD, "\\G");
+		}
+		else
+		{
+			history(hist, &ev, H_ADD, ";");
+		}
 		if(pqueries[c].query[0] == '\\')
 		{
 			exec_builtin(sparql_conn, hist, pqueries[c].query);
