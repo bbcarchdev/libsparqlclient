@@ -87,7 +87,7 @@ sparql_insert(SPARQL *connection, const char *triples, size_t len, const char *g
 	{
 		return 0;
 	}
-	if(connection->data_uri)
+	if(!connection->noput && connection->data_uri)
 	{
 		return sparql_post(connection, graphuri, triples, len);
 	}
