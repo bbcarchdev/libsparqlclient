@@ -2,7 +2,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014-2015 BBC
+ * Copyright (c) 2014-2017 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,6 +77,7 @@ struct sparql_connection_struct
 	char state[16];
 	char *error;
 	struct sparql_capture_struct capture;
+	int noput;
 };
 
 size_t sparql_urlencode_size_(const char *src);

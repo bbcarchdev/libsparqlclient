@@ -2,7 +2,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014 BBC
+ * Copyright (c) 2017 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,13 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	char *buf, *t;
 	size_t buflen;
 	int r;
+	long status;
 
+	if(connection->noput)
+	{
+		/* This connection does not support PUT */
+		return sparql_insert(connection, triples, length, graph);
+	}
 	if(!connection->data_uri)
 	{
 		errno = EINVAL;
@@ -57,8 +63,14 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	headers = curl_slist_append(NULL, "Content-type: text/turtle; charset=utf-8");
 	curl_easy_setopt(ch, CURLOPT_HTTPHEADER, headers);
 	r = sparql_curl_perform_(ch);
+	curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &status);
 	free(buf);
 	curl_slist_free_all(headers);
 	curl_easy_cleanup(ch);
+	if(status == 405 || status == 501)
+	{
+		connection->noput = 1;
+		return sparql_insert(connection, triples, length, graph);
+	}
 	return r;
 }
