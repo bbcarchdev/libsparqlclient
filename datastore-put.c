@@ -67,7 +67,7 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	free(buf);
 	curl_slist_free_all(headers);
 	curl_easy_cleanup(ch);
-	if(status == 405 || status == 501)
+	if(status == 405 || status == 409 || status == 501)
 	{
 		connection->noput = 1;
 		return sparql_insert(connection, triples, length, graph);
