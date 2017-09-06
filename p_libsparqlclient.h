@@ -77,7 +77,6 @@ struct sparql_connection_struct
 	char state[16];
 	char *error;
 	struct sparql_capture_struct capture;
-	int noput;
 };
 
 size_t sparql_urlencode_size_(const char *src);

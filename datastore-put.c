@@ -34,13 +34,9 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	int r;
 	long status;
 
-	if(connection->noput)
-	{
-		/* This connection does not support PUT */
-		return sparql_insert(connection, triples, length, graph);
-	}
 	if(!connection->data_uri)
 	{
+		/* TODO: perform a normal graph replace (DROP/CLEAR then INSERT) */
 		errno = EINVAL;
 		return -1;
 	}
@@ -67,10 +63,5 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	free(buf);
 	curl_slist_free_all(headers);
 	curl_easy_cleanup(ch);
-	if(status == 405 || status == 409 || status == 501)
-	{
-		connection->noput = 1;
-		return sparql_insert(connection, triples, length, graph);
-	}
 	return r;
 }
