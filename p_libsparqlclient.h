@@ -30,6 +30,7 @@
 # include <assert.h>
 # include <curl/curl.h>
 # include <libxml/parser.h>
+# include <liburi.h>
 
 # include "libsparqlclient.h"
 
@@ -67,6 +68,7 @@ struct sparql_capture_struct
 
 struct sparql_connection_struct
 {
+	URI *base;
 	char *query_uri;
 	char *update_uri;
 	char *data_uri;

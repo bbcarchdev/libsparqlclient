@@ -36,9 +36,7 @@ typedef void (*sparql_logger_fn)(int priority, const char *format, va_list args)
 
 SPARQL *sparql_create(const char *baseuri);
 int sparql_destroy(SPARQL *connection);
-int sparql_set_query_uri(SPARQL *connection, const char *uri);
-int sparql_set_data_uri(SPARQL *connection, const char *uri);
-int sparql_set_update_uri(SPARQL *connection, const char *uri);
+int sparql_set_base(SPARQL *connection, const char *uri);
 int sparql_set_logger(SPARQL *connection, sparql_logger_fn logger);
 int sparql_set_verbose(SPARQL *connection, int verbose);
 int sparql_set_world(SPARQL *connection, librdf_world *world);
@@ -82,6 +80,12 @@ size_t sparqlres_rows(SPARQLRES *res);
 size_t sparqlrow_bindings(SPARQLROW *row);
 librdf_node *sparqlrow_binding(SPARQLROW *row, size_t index);
 size_t sparqlrow_value(SPARQLROW *row, size_t index, char *buf, size_t bufsize);
+
+/* Deprecated methods */
+int sparql_set_query_uri(SPARQL *connection, const char *uri);
+int sparql_set_data_uri(SPARQL *connection, const char *uri);
+int sparql_set_update_uri(SPARQL *connection, const char *uri);
+
 
 # ifdef __cplusplus
 }

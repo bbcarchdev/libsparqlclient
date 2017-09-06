@@ -57,9 +57,8 @@ main(int argc, char **argv)
 		fprintf(stderr, "Usage: %s URI QUERY\n", argv[0]);
 		return 1;
 	}
-	sparql = sparql_create(NULL);
+	sparql = sparql_create(argv[1]);
 	sparql_set_logger(sparql, logger);
-	sparql_set_query_uri(sparql, argv[1]);
 	sparql_set_verbose(sparql, 1);
 	result = sparql_query(sparql, argv[2], strlen(argv[2]));
 	if(!result)

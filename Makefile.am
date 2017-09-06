@@ -1,8 +1,8 @@
-##  Twine: SPARQL client library
+## SPARQL client library
 ##
-##  Author: Mo McRoberts
+## Author: Mo McRoberts
 ##
-##  Copyright (c) 2014-2015 BBC
+## Copyright (c) 2014-2017 BBC
 ##
 ##  Licensed under the Apache License, Version 2.0 (the "License");
 ##  you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ libsparqlclient_la_LIBADD = @LIBCURL_LOCAL_LIBS@ @LIBCURL_LIBS@ \
 	@LIBXML2_LOCAL_LIBS@ @LIBXML2_LIBS@ \
 	@LIBRAPTOR2_LOCAL_LIBS@ @LIBRAPTOR2_LIBS@ \
 	@LIBRDF_LOCAL_LIBS@ @LIBRDF_LIBS@ \
+	@LIBURI_LOCAL_LIBS@ @LIBURI_LIBS@ \
 	@PTHREAD_LOCAL_LIBS@ @PTHREAD_LIBS@
 
 bin_PROGRAMS = libsparqlclient-config sparql-query isparql

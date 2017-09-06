@@ -1,8 +1,8 @@
-##  libsparqlclient: A SPARQL 1.1 client library
+##  SPARQL client library
 ##
 ##  Author: Mo McRoberts
 ##
-##  Copyright (c) 2014-2015 BBC
+##  Copyright (c) 2014-2017 BBC
 ##
 ##  Licensed under the Apache License, Version 2.0 (the "License");
 ##  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ BT_REQUIRE_PTHREAD
 BT_REQUIRE_LIBXML2
 BT_REQUIRE_LIBCURL
 BT_REQUIRE_LIBRDF
+BT_REQUIRE_LIBURI
 
 BT_BUILD_DOCS
 
