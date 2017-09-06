@@ -1,9 +1,8 @@
-/*
- * SPARQL client: query interface
+/* SPARQL client library: simple command-line query tool
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014-2015 BBC
+ * Copyright (c) 2014-2017 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +26,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdarg.h>
+#include <syslog.h>
 
 #include "libsparqlclient.h"
 
@@ -35,6 +35,10 @@ static char *node_to_string(SPARQL *sparql, librdf_node *node);
 void
 logger(int priority, const char *format, va_list ap)
 {
+	if(priority > LOG_INFO)
+	{
+		return;
+	}
 	fprintf(stderr, "SPARQL<%d>: ", priority);
 	vfprintf(stderr, format, ap);
 }
