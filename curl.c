@@ -2,7 +2,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2014-2015 BBC
+ * Copyright (c) 2014-2017 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ sparql_curl_create_(SPARQL *connection, const char *url)
 	curl_easy_setopt(ch, CURLOPT_VERBOSE, connection->verbose);
 	curl_easy_setopt(ch, CURLOPT_FAILONERROR, 0);
 	curl_easy_setopt(ch, CURLOPT_NOPROGRESS, 1);
+	curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 1);
 	curl_easy_setopt(ch, CURLOPT_WRITEDATA, (void *) &(connection->capture));
 	curl_easy_setopt(ch, CURLOPT_WRITEFUNCTION, sparql_curl_dummy_write_);
 	curl_easy_setopt(ch, CURLOPT_PRIVATE, (void *) connection);
