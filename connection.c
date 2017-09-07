@@ -24,7 +24,7 @@
 #include "p_libsparqlclient.h"
 
 static int sparql_librdf_logger_(void *data, librdf_log_message *message);
-static char *sparql_derive_uri_(SPARQL *connection, URI_INFO *info, const char *key, const char *defuri);
+static char *sparql_derive_uri_(SPARQL *connection, const URI *base, URI_INFO *info, const char *key, const char *defuri);
 
 /* Create a new SPARQL client connection */
 SPARQL *
@@ -225,9 +225,9 @@ sparql_set_base(SPARQL *connection, const char *uri)
 	}
 	free(basestr);
 
-	query = sparql_derive_uri_(connection, info, "query-uri", def_query);
-	update = sparql_derive_uri_(connection, info, "update-uri", def_update);
-	data = sparql_derive_uri_(connection, info, "data-uri", def_data);
+	query = sparql_derive_uri_(connection, base, info, "query-uri", def_query);
+	update = sparql_derive_uri_(connection, base, info, "update-uri", def_update);
+	data = sparql_derive_uri_(connection, base, info, "data-uri", def_data);
 
 	uri_info_destroy(info);
 	
@@ -398,22 +398,31 @@ sparql_librdf_logger_(void *data, librdf_log_message *message)
  *
  */
 static char *
-sparql_derive_uri_(SPARQL *connection, URI_INFO *info, const char *key, const char *defuri)
+sparql_derive_uri_(SPARQL *connection, const URI *base, URI_INFO *info, const char *key, const char *defuri)
 {
 	const char *uristr;
 	URI *uri;
 	char *s;
 
-	uristr = uri_info_get(info, key, defuri);
-	if(!uristr)
+	(void) connection;
+
+	if(info)
 	{
-		if(defuri)
+		uristr = uri_info_get(info, key, defuri);
+		if(!uristr)
 		{
-			/* This shouldn't happen */
+			if(defuri)
+			{
+				/* This shouldn't happen */
+			}
+			return NULL;	  
 		}
-		return NULL;	  
 	}
-	uri = uri_create_str(uristr, connection->base);
+	else
+	{
+		uristr = defuri;
+	}
+	uri = uri_create_str(uristr, base);
 	if(!uri)
 	{
 		return NULL;
