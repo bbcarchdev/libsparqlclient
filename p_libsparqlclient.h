@@ -35,8 +35,25 @@
 # include "libsparqlclient.h"
 
 # if _STDC_VERSION__ < 199901L && !defined(restrict)
-#  define restrict
+#  define restrict                      /* */
 # endif
+
+# define SPARQLSTATE_URI_PARSE          "U0001"
+# define SPARQLSTATE_URI_INFO           "U0002"
+# define SPARQLSTATE_URI_QUERY          "U0003"
+
+# define SPARQLSTATE_NO_DATASTORE       "X0001"
+# define SPARQLSTATE_RS_NOTEMPTY        "X0002"
+# define SPARQLSTATE_CREATE_WORLD       "X0003"
+# define SPARQLSTATE_CREATE_URI         "X0004"
+# define SPARQLSTATE_CREATE_NODE        "X0005"
+# define SPARQLSTATE_CREATE_STREAM      "X0006"
+# define SPARQLSTATE_BIND_INVALID       "X0007"
+# define SPARQLSTATE_SERIALISE          "X0008"
+
+# define SPARQLSTATE_INDEX_BOUNDS       "W0001"
+# define SPARQLSTATE_RESET_BOOL         "W0002"
+# define SPARQLSTATE_FETCH_BOOL         "W0003"
 
 typedef struct sparql_query_struct SPARQLQUERY;
 typedef enum sparql_parse_state SPARQLSTATE;

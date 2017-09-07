@@ -97,8 +97,7 @@ sparqlres_add_variable_(SPARQLRES *res, const char *name)
 
 	if(res->rowcount)
 	{
-		sparql_logf_(res->connection, LOG_ERR, "cannot add a variable because rows have already been added to the result-set\n");
-		errno = EINVAL;
+		sparql_set_error_(res->connection, SPARQLSTATE_RS_NOTEMPTY, "cannot add a variable because rows have already been added to the result-set\n");
 		return -1;
 	}
 	if(res->varcount + 1 >= res->varsize)
@@ -158,7 +157,7 @@ sparqlres_variable(SPARQLRES *res, size_t index)
 {
 	if(index >= res->varcount)
 	{
-		errno = EINVAL;
+		sparql_set_error_(res->connection, SPARQLSTATE_INDEX_BOUNDS, "attempt to retrieve variable from a result-set with an index out of bounds");
 		return NULL;
 	}
 	return res->variables[index];
@@ -190,7 +189,7 @@ sparqlres_link(SPARQLRES *res, size_t index)
 {
 	if(index >= res->linkcount)
 	{
-		errno = EINVAL;
+		sparql_set_error_(res->connection, SPARQLSTATE_INDEX_BOUNDS, "attempt to retrieve link from a result-set with an index out of bounds");
 		return NULL;
 	}
 	return res->links[index];
@@ -201,7 +200,7 @@ sparqlres_reset(SPARQLRES *res)
 {
 	if(res->boolean != -1)
 	{
-		errno = EINVAL;
+		sparql_set_error_(res->connection, SPARQLSTATE_RESET_BOOL, "attempt to reset the cursor on a boolean result-set");
 		return -1;
 	}
 	res->reset = 1;
@@ -213,7 +212,7 @@ sparqlres_next(SPARQLRES *res)
 {
 	if(res->boolean != -1)
 	{
-		errno = EINVAL;
+		sparql_set_error_(res->connection, SPARQLSTATE_FETCH_BOOL, "attempt to fetch a row from a boolean result-set");
 		return NULL;
 	}
 	if(res->reset)
@@ -326,20 +325,19 @@ sparqlrow_set_uri_(SPARQLRES *res, SPARQLROW *row, const char *binding, const ch
 	world = sparql_world(row->results->connection);
 	if(!world)
 	{
-		sparql_logf_(row->results->connection, LOG_CRIT, "failed to obtain librdf world for connection\n");
 		return -1;
 	}
 	index = sparqlres_variable_index(row->results, binding);
 	if(index < 0)
 	{
 		sparql_logf_(row->results->connection, LOG_ERR, "failed to bind URI to '%s' because the variable does not exist\n", binding);
-		errno = EINVAL;
+		sparql_set_error_(row->results->connection, SPARQLSTATE_BIND_INVALID, "failed to bind URI to a variable which does not exist");
 		return -1;
 	}
 	node = librdf_new_node_from_uri_string(world, (const unsigned char *) uri);
 	if(!node)
 	{
-		sparql_logf_(row->results->connection, LOG_CRIT, "failed to create new URI node\n");
+		sparql_set_error_(row->results->connection, SPARQLSTATE_CREATE_NODE, "failed to create new URI node");
 		return -1;
 	}
 	if(sparqlrow_set_node_(res, row, index, node))
@@ -365,20 +363,19 @@ sparqlrow_set_bnode_(SPARQLRES *res, SPARQLROW *row, const char *binding, const 
 	world = sparql_world(row->results->connection);
 	if(!world)
 	{
-		sparql_logf_(row->results->connection, LOG_CRIT, "failed to obtain librdf world for connection\n");
 		return -1;
 	}
 	index = sparqlres_variable_index(row->results, binding);
 	if(index < 0)
 	{
 		sparql_logf_(row->results->connection, LOG_ERR, "failed to bind URI to '%s' because the variable does not exist\n", binding);
-		errno = EINVAL;
+		sparql_set_error_(row->results->connection, SPARQLSTATE_BIND_INVALID, "failed to bind URI to a variable which does not exist");
 		return -1;
 	}
 	node = librdf_new_node_from_blank_identifier(world, (const unsigned char *) ref);
 	if(!node)
 	{
-		sparql_logf_(row->results->connection, LOG_CRIT, "failed to create new blank node\n");
+		sparql_set_error_(row->results->connection, SPARQLSTATE_CREATE_NODE, "failed to create new blank node");
 		return -1;
 	}
 	if(sparqlrow_set_node_(res, row, index, node))
@@ -405,14 +402,13 @@ sparqlrow_set_literal_(SPARQLRES *res, SPARQLROW *row, const char *binding, cons
 	world = sparql_world(row->results->connection);
 	if(!world)
 	{
-		sparql_logf_(row->results->connection, LOG_CRIT, "failed to obtain librdf world for connection\n");
 		return -1;
 	}
 	index = sparqlres_variable_index(row->results, binding);
 	if(index < 0)
 	{
 		sparql_logf_(row->results->connection, LOG_ERR, "failed to bind URI to '%s' because the variable does not exist\n", binding);
-		errno = EINVAL;
+		sparql_set_error_(row->results->connection, SPARQLSTATE_BIND_INVALID, "failed to bind URI to a variable which does not exist");
 		return -1;
 	}
 	if(datatype)
@@ -420,7 +416,7 @@ sparqlrow_set_literal_(SPARQLRES *res, SPARQLROW *row, const char *binding, cons
 		type = librdf_new_uri(world, (const unsigned char *) datatype);
 		if(!type)
 		{
-			sparql_logf_(row->results->connection, LOG_CRIT, "failed to create new URI for literal datatype\n");
+			sparql_set_error_(row->results->connection, SPARQLSTATE_CREATE_URI, "failed to create datatype URI");
 			return -1;
 		}
 	}
@@ -435,7 +431,7 @@ sparqlrow_set_literal_(SPARQLRES *res, SPARQLROW *row, const char *binding, cons
 	}
 	if(!node)
 	{
-		sparql_logf_(row->results->connection, LOG_CRIT, "failed to create new literal node\n");
+		sparql_set_error_(row->results->connection, SPARQLSTATE_CREATE_NODE, "failed to create new literal node");
 		return -1;
 	}
 	if(sparqlrow_set_node_(res, row, index, node))
@@ -461,10 +457,10 @@ sparqlrow_binding(SPARQLROW *row, size_t index)
 {
 	if(index >= row->results->varcount)
 	{
-		errno = EINVAL;
+		sparql_set_error_(row->results->connection, SPARQLSTATE_INDEX_BOUNDS, "cannot retrieve a binding with an index out of range");
 		return NULL;
 	}
-	errno = 0;
+	sparql_set_nerror_(row->results->connection, 0, NULL);
 	return row->nodes[index];
 }
 
@@ -486,7 +482,7 @@ sparqlrow_value(SPARQLROW *row, size_t index, char *buf, size_t buflen)
 
 	if(index >= row->results->varcount)
 	{
-		errno = EINVAL;
+		sparql_set_error_(row->results->connection, SPARQLSTATE_INDEX_BOUNDS, "cannot retrieve a value with an index out of range");
 		return (size_t) -1;
 	}
 	str = sparqlrow_node_string_(row, row->nodes[index]);
@@ -539,12 +535,14 @@ sparqlrow_node_string_(SPARQLROW *row, librdf_node *node)
 	stream = raptor_new_iostream_to_string(world, (void **) &buf, NULL, malloc);
 	if(!stream)
 	{
+		sparql_set_error_(row->results->connection, SPARQLSTATE_CREATE_STREAM, "failed to create Raptor iostream for node serialisation");
 		return NULL;
 	}
 	r = librdf_node_write(node, stream);
 	raptor_free_iostream(stream);
 	if(r)
 	{
+		sparql_set_error_(row->results->connection, SPARQLSTATE_SERIALISE, "failed to serialise node");
 		free(buf);
 		return NULL;
 	}

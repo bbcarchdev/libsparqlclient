@@ -36,7 +36,7 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	if(!connection->data_uri)
 	{
 		/* TODO: perform a normal graph replace (DROP/CLEAR then INSERT) */
-		errno = EINVAL;
+		sparql_set_error_(connection, SPARQLSTATE_NO_DATASTORE, "cannot PUT to a server without a RESTful data endpoint");
 		return -1;
 	}
 	buflen = sparql_urlencode_size_(graph);

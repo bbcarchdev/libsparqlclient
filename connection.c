@@ -214,14 +214,14 @@ sparql_set_base(SPARQL *connection, const char *uri)
 	base = uri_create_str(uri, NULL);
 	if(!base)
 	{
-		sparql_set_error_(connection, "U0001", "Failed to parse base URI");
+		sparql_set_error_(connection, SPARQLSTATE_URI_PARSE, "Failed to parse base URI");
 		free(basestr);
 		return -1;
 	}
 	info = uri_info(base);
 	if(!info)
 	{
-		sparql_set_error_(connection, "U0002", "Failed to obtain information from parsed URI");
+		sparql_set_error_(connection, SPARQLSTATE_URI_INFO, "Failed to obtain information from parsed URI");
 		uri_destroy(base);
 		free(basestr);
 		return -1;
@@ -236,7 +236,7 @@ sparql_set_base(SPARQL *connection, const char *uri)
 	
 	if(!query)
 	{
-		sparql_set_error_(connection, "U0003", "Failed to derived query URI from base URI");
+		sparql_set_error_(connection, SPARQLSTATE_URI_QUERY, "Failed to derived query URI from base URI");
 		uri_destroy(base);
 		return -1;
 	}
@@ -338,7 +338,7 @@ sparql_world(SPARQL *connection)
 		connection->world = librdf_new_world();
 		if(!connection->world)
 		{
-			sparql_logf_(connection, LOG_CRIT, "failed to create new librdf world\n");
+			sparql_set_error_(connection, SPARQLSTATE_CREATE_WORLD, "failed to create new librdf world instance");
 			return NULL;
 		}
 		librdf_world_open(connection->world);

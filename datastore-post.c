@@ -2,7 +2,7 @@
  *
  * Author: Mo McRoberts <mo.mcroberts@bbc.co.uk>
  *
- * Copyright (c) 2015 BBC
+ * Copyright (c) 2017 BBC
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ sparql_post(SPARQL *connection, const char *graph, const char *triples, size_t l
 
 	if(!connection->data_uri)
 	{
-		errno = EINVAL;
+		sparql_set_error_(connection, SPARQLSTATE_NO_DATASTORE, "cannot POST to a server without a RESTful data endpoint");
 		return -1;
 	}
 	buflen = sparql_urlencode_size_(graph) + sparql_urlencode_lsize_(triples, length) + 64;
