@@ -32,7 +32,6 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	char *buf, *t;
 	size_t buflen;
 	int r;
-	long status;
 
 	if(!connection->data_uri)
 	{
@@ -59,7 +58,6 @@ sparql_put(SPARQL *connection, const char *graph, const char *triples, size_t le
 	headers = curl_slist_append(NULL, "Content-type: text/turtle; charset=utf-8");
 	curl_easy_setopt(ch, CURLOPT_HTTPHEADER, headers);
 	r = sparql_curl_perform_(ch);
-	curl_easy_getinfo(ch, CURLINFO_RESPONSE_CODE, &status);
 	free(buf);
 	curl_slist_free_all(headers);
 	curl_easy_cleanup(ch);

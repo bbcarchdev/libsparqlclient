@@ -109,14 +109,17 @@ sparql_set_error_(SPARQL *connection, const char *state, const char *error)
 	{
 		free(connection->error);
 	}
-	connection->error = s;	
-	if(s)
-	{
-		sparql_logf_(connection, LOG_ERR, "SPARQL Error [%s] %s\n", connection->state, s);
-	}
-	else
-	{
-		sparql_logf_(connection, LOG_ERR, "SPARQL Error [%s] (unknown error)\n", connection->state);
+	connection->error = s;
+	if(strcmp(connection->state, "00000") || s)
+	{		
+		if(s)
+		{
+			sparql_logf_(connection, LOG_ERR, "SPARQL Error [%s] %s\n", connection->state, s);
+		}
+		else
+		{
+			sparql_logf_(connection, LOG_ERR, "SPARQL Error [%s] (unknown error)\n", connection->state);
+		}
 	}
 }
 

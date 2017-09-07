@@ -61,7 +61,7 @@ sparql_curl_perform_(CURL *ch)
 	int ms;
 
 	gettimeofday(&tv, NULL);
-	start = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);	
+	start = (tv.tv_sec * 1000) + (tv.tv_usec / 1000);
 	e = curl_easy_perform(ch);
 	gettimeofday(&tv, NULL);
 	ms = (int) (((tv.tv_sec * 1000) + (tv.tv_usec / 1000)) - start);
@@ -78,7 +78,7 @@ sparql_curl_perform_(CURL *ch)
 	}
 	if(e == CURLE_OK)
 	{
-		sparql_logf_(connection, LOG_DEBUG, "SPARQL: query completed in %dms\n", ms);
+		sparql_logf_(connection, LOG_DEBUG, "SPARQL: request completed in %dms\n", ms);
 		if(connection)
 		{
 			sparql_set_nerror_(connection, 0, NULL);
