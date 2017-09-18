@@ -5,14 +5,21 @@ compiler: clang
 before_install:
 - curl https://letsencrypt.org/certs/isrgrootx1.pem.txt | sudo tee /usr/share/ca-certificates/isrgrootx1.crt
 - echo "isrgrootx1.crt" | sudo tee -a /etc/ca-certificates.conf
-- curl https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem.txt | sudo tee /usr/share/ca-certificates/lets-encrypt-x3-cross-signed.crt
+- curl https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem.txt | sudo tee
+  /usr/share/ca-certificates/lets-encrypt-x3-cross-signed.crt
 - echo "lets-encrypt-x3-cross-signed.crt" | sudo tee -a /etc/ca-certificates.conf
 - sudo update-ca-certificates
-- curl https://raw.githubusercontent.com/bbcarchdev/bbcarchdev-keys/main/bbcarchdev-apt.asc | sudo apt-key add -
-- echo "deb [arch=amd64] https://apt.bbcarchdev.net/debian wheezy main ports dev stage live" | sudo tee -a /etc/apt/sources.list
+- curl https://raw.githubusercontent.com/bbcarchdev/bbcarchdev-keys/main/bbcarchdev-apt.asc
+  | sudo apt-key add -
+- echo "deb [arch=amd64] https://apt.bbcarchdev.net/debian wheezy main ports dev stage
+  live" | sudo tee -a /etc/apt/sources.list
 - sudo apt-get update -qq
-- sudo apt-get install -qq libxml2-dev libcurl4-gnutls-dev librdf0-dev libltdl-dev libedit-dev python-minimal 4store procps automake autoconf libtool pkg-config liburi-dev
+- sudo apt-get install -qq libxml2-dev libcurl4-gnutls-dev librdf0-dev libltdl-dev
+  libedit-dev python-minimal 4store procps automake autoconf libtool pkg-config liburi-dev
 before_script:
 - autoreconf -f -i
 script:
 - ./configure && make && make check
+notifications:
+  slack:
+    secure: SyXrw9j1OFu604ofgDd7m3tZMK9ujdF0hKP8AMkFhsTyqEgqM8bAR4Sf1o8sWUEPgtF1zVQraDGEAypJtI1AxhQTb2uqQcaH9Gzwn8LBbeKg2PXl/AK4BtneJXyNPpBwvRIWaMvoRjjacc/YlnBlhHlVXaz0tYtRcujJ77W0P9g=
